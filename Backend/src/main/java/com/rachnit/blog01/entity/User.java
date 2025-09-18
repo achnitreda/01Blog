@@ -1,24 +1,27 @@
 package com.rachnit.blog01.entity;
 
+import java.time.LocalDateTime;
+
+import com.rachnit.blog01.entity.enums.Role;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
-// we know that those are jpa annotations are like contract that Hibernate follows to convert our java objects
-// to sql raws but I know it stands for java persistence api why here we import jakarta what is jakarta ??
-// correct me if I'm wrong
 @Entity
 @Table(name = "users")
 public class User {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY) // explain it to me it means what
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false) // is this means that it should be unique and never null but how can the user insert null
+    @Column(unique = true, nullable = false)
     private String username;
 
     @Column(unique = true, nullable = false)
@@ -27,15 +30,28 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER;
+
+    @Column(nullable = false)
+    private boolean active = true;
+
+    @Column(nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     // Default constructor (required by JPA)
     // you'll need it later when we fetch users from the database!
     // TODO: uncomment this line.
-    // public User() {}
+    public User() {}
 
     public User(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+        this.role = Role.USER;
+        this.active = true;
+        this.createdAt = LocalDateTime.now();
     }
 
     // Getters and setters
@@ -50,4 +66,13 @@ public class User {
     
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+
+    public Role getRole() { return role; }
+    public void setRole(Role role) { this.role = role; }
+
+    public boolean isActive() { return active; }
+    public void setActive(boolean active) { this.active = active; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }
