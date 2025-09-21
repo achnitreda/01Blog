@@ -8,7 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.rachnit.blog01.entity.enums.Role;
+import com.rachnit.blog01.enums.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

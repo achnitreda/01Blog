@@ -1,6 +1,6 @@
 package com.rachnit.blog01.dto.response;
 
-import com.rachnit.blog01.entity.enums.Role;
+import com.rachnit.blog01.enums.Role;
 
 public class AuthResponse {
 

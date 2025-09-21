@@ -11,7 +11,7 @@ import com.rachnit.blog01.dto.request.LoginRequest;
 import com.rachnit.blog01.dto.request.RegisterRequest;
 import com.rachnit.blog01.dto.response.AuthResponse;
 import com.rachnit.blog01.entity.User;
-import com.rachnit.blog01.entity.enums.Role;
+import com.rachnit.blog01.enums.Role;
 import com.rachnit.blog01.repository.UserRepository;
 
 @Service

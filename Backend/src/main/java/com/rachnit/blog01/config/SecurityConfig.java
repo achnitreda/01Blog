@@ -21,49 +21,54 @@ import com.rachnit.blog01.security.JwtRequestFilter;
 public class SecurityConfig {
     
     @Autowired
-    private JwtRequestFilter jwtRequestFilter;
-
-    @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-
-    // This creates ONE instance that Spring will reuse everywhere
+    
+    @Autowired
+    private JwtRequestFilter jwtRequestFilter;
+    
+    @Autowired
+    private DatabaseProperties databaseProperties;
+    
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
-    /**
-     * AuthenticationManager bean for login validation
-     * This will be used in our AuthController to validate login credentials
-     */
+    
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
+    
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-                // no need for csrf when we use JWT
+        HttpSecurity httpSecurity = http
                 .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers
-                    .frameOptions(frameOptions -> frameOptions.sameOrigin()) // allow h2 console
-                ) 
-                .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/h2-console/**").permitAll()
-                .requestMatchers("/error").permitAll()
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .anyRequest().authenticated()
-                )
+                .authorizeHttpRequests(authz -> {
+                    authz.requestMatchers("/api/auth/**").permitAll()
+                         .requestMatchers("/error").permitAll()
+                         .requestMatchers("/api/admin/**").hasRole("ADMIN");
+                    
+                    if (databaseProperties.isEnableH2Console()) {
+                        authz.requestMatchers("/h2-console/**").permitAll();
+                    }
+                    
+                    authz.anyRequest().authenticated();
+                });
+        
+        if (databaseProperties.isEnableH2Console()) {
+            httpSecurity.headers(headers -> headers
+                    .frameOptions(frameOptions -> frameOptions.sameOrigin())
+            );
+        }
+        
+        return httpSecurity
                 .exceptionHandling(ex -> ex
-                    .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
-                // Add our JWT filter BEFORE the default authentication filter
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                // jwt tokens (stateless)
                 .sessionManagement(session -> 
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                ).build();
+                )
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .build();
     }
 }
