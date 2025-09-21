@@ -17,7 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     
     /**
      * Load user by username for Spring Security authentication
-     * This method is called by our JwtRequestFilter and during login
+     * This method is called by our JwtRequestFilter and during (login by AuthenticationManager)
     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

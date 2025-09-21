@@ -18,10 +18,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
     
-    // TODO:
-    // JWT library throws error:
-    // "The specified key byte array is 5 bits which is not secure enough for the HS256 algorithm"
-    private static final String SECRET_KEY = "short"; 
+    private static final String SECRET_KEY = "mySecretKeyThatNeedsToBeAtLeast32CharactersLong"; 
 
     private static final long JWT_EXPIRATION = 1000 * 60 * 60 * 24;
 
