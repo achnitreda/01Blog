@@ -38,6 +38,15 @@ public class PostController {
     }
 
     /**
+     * Get personalized feed (posts from users you follow)
+     */
+     @GetMapping("/feed")
+    public ResponseEntity<List<PostResponse>> getPersonalizedFeed() {
+        List<PostResponse> posts = postService.getPersonalizedFeed();
+        return ResponseEntity.ok(posts);
+    }
+
+    /**
      * Create a new post
      */
     @PostMapping

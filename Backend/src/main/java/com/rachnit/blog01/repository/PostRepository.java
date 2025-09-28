@@ -20,4 +20,10 @@ public interface PostRepository extends JpaRepository<BlogPost, Long> {
 
     // Verify ownership
     Optional<BlogPost> findByIdAndAuthor(Long id, User author);
+
+    // Count posts by author
+    long countByAuthor(User author);
+
+    // Get posts from multiple authors (for personalized feed)
+    List<BlogPost> findByAuthorInOrderByCreatedAtDesc(List<User> authors);
 }

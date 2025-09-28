@@ -1,5 +1,6 @@
 package com.rachnit.blog01.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,7 @@ import com.rachnit.blog01.dto.response.PostResponse;
 import com.rachnit.blog01.entity.BlogPost;
 import com.rachnit.blog01.entity.User;
 import com.rachnit.blog01.repository.PostRepository;
+import com.rachnit.blog01.repository.SubscriptionRepository;
 import com.rachnit.blog01.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -31,6 +33,9 @@ public class PostService {
     
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private SubscriptionRepository subscriptionRepository;
 
     /**
     * Get current authenticated user
@@ -120,6 +125,28 @@ public class PostService {
 
     public List<PostResponse> getAllPosts() {
         List<BlogPost> posts = postRepository.findAllByOrderByCreatedAtDesc();
+        return posts.stream()
+                .map(this::convertToPostResponse)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Get personalized feed (posts from users you follow)
+    */
+    public List<PostResponse> getPersonalizedFeed() {
+       User currentUser = getCurrentUser();
+
+       // Get all users that current user is following
+        List<User> followedUsers = subscriptionRepository.findUsersFollowedBy(currentUser);
+
+        // If not following anyone, return empty feed
+        if (followedUsers.isEmpty()) {
+            return new ArrayList<>();
+        } 
+
+        // Get posts from followed users
+        List<BlogPost> posts = postRepository.findByAuthorInOrderByCreatedAtDesc(followedUsers);
+
         return posts.stream()
                 .map(this::convertToPostResponse)
                 .collect(Collectors.toList());
