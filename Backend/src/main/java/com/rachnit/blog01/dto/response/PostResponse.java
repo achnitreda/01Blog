@@ -15,6 +15,10 @@ public class PostResponse {
     private Long authorId;
     private String authorUsername;
 
+    private long likesCount;
+    private boolean isLiked;
+    private long commentsCount;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
     
@@ -33,6 +37,27 @@ public class PostResponse {
         this.mediaType = mediaType;
         this.authorId = authorId;
         this.authorUsername = authorUsername;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.likesCount = 0;
+        this.isLiked = false;
+        this.commentsCount = 0; 
+    }
+
+    // Full constructor with social stats
+    public PostResponse(Long id, String title, String content, String mediaUrl, String mediaType,
+                       Long authorId, String authorUsername, long likesCount, boolean isLiked,
+                       long commentsCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.mediaUrl = mediaUrl;
+        this.mediaType = mediaType;
+        this.authorId = authorId;
+        this.authorUsername = authorUsername;
+        this.likesCount = likesCount;
+        this.isLiked = isLiked;
+        this.commentsCount = commentsCount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -58,6 +83,15 @@ public class PostResponse {
     
     public String getAuthorUsername() { return authorUsername; }
     public void setAuthorUsername(String authorUsername) { this.authorUsername = authorUsername; }
+
+    public long getLikesCount() { return likesCount; }
+    public void setLikesCount(long likesCount) { this.likesCount = likesCount; }
+    
+    public boolean isLiked() { return isLiked; }
+    public void setLiked(boolean liked) { isLiked = liked; }
+
+    public long getCommentsCount() { return commentsCount; } 
+    public void setCommentsCount(long commentsCount) { this.commentsCount = commentsCount; } 
     
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

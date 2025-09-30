@@ -14,6 +14,8 @@ import com.rachnit.blog01.dto.request.UpdatePostRequest;
 import com.rachnit.blog01.dto.response.PostResponse;
 import com.rachnit.blog01.entity.BlogPost;
 import com.rachnit.blog01.entity.User;
+import com.rachnit.blog01.repository.CommentRepository;
+import com.rachnit.blog01.repository.LikeRepository;
 import com.rachnit.blog01.repository.PostRepository;
 import com.rachnit.blog01.repository.SubscriptionRepository;
 import com.rachnit.blog01.repository.UserRepository;
@@ -37,6 +39,12 @@ public class PostService {
     @Autowired
     private SubscriptionRepository subscriptionRepository;
 
+    @Autowired
+    private LikeRepository likeRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
+
     /**
     * Get current authenticated user
     */
@@ -59,19 +67,17 @@ public class PostService {
         );
 
         BlogPost savedPost = postRepository.save(post);
-        return convertToPostResponse(savedPost);
+        return convertToPostResponse(savedPost, currentUser);
     }
 
     public PostResponse getPostById(Long postId) {
+        User currentUser = getCurrentUser();
         BlogPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
         
-        return convertToPostResponse(post);
+        return convertToPostResponse(post, currentUser);
     }
 
-    /**
-     * Update a post (only by owner)
-    */
     public PostResponse updatePost(Long postId, UpdatePostRequest request) {
         User currentUser = getCurrentUser();
 
@@ -94,7 +100,7 @@ public class PostService {
         }
 
         BlogPost updatedPost = postRepository.save(post);
-        return convertToPostResponse(updatedPost);
+        return convertToPostResponse(updatedPost, currentUser);
     }
 
     public void deletePost(Long postId) {
@@ -108,13 +114,14 @@ public class PostService {
     }
 
     public List<PostResponse> getUserPosts(Long userId) {
+        User currentUser = getCurrentUser();
         // Verify user exists
         userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         List<BlogPost> posts = postRepository.findByAuthor_IdOrderByCreatedAtDesc(userId);
         return posts.stream()
-                .map(this::convertToPostResponse)
+                .map(post -> convertToPostResponse(post, currentUser))
                 .collect(Collectors.toList());
     }
 
@@ -124,38 +131,36 @@ public class PostService {
     }
 
     public List<PostResponse> getAllPosts() {
+        User currentUser = getCurrentUser();
         List<BlogPost> posts = postRepository.findAllByOrderByCreatedAtDesc();
         return posts.stream()
-                .map(this::convertToPostResponse)
+                .map(post -> convertToPostResponse(post, currentUser))
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get personalized feed (posts from users you follow)
-    */
     public List<PostResponse> getPersonalizedFeed() {
        User currentUser = getCurrentUser();
 
-       // Get all users that current user is following
         List<User> followedUsers = subscriptionRepository.findUsersFollowedBy(currentUser);
 
-        // If not following anyone, return empty feed
         if (followedUsers.isEmpty()) {
             return new ArrayList<>();
         } 
 
-        // Get posts from followed users
         List<BlogPost> posts = postRepository.findByAuthorInOrderByCreatedAtDesc(followedUsers);
 
         return posts.stream()
-                .map(this::convertToPostResponse)
+                .map(post -> convertToPostResponse(post, currentUser))
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Convert BlogPost entity to PostResponse DTO
-     */
-    private PostResponse convertToPostResponse(BlogPost post) {
+    private PostResponse convertToPostResponse(BlogPost post, User currentUser) {
+
+        long likesCount = likeRepository.countByPost(post);
+        boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
+
+        long commentsCount = commentRepository.countByPost(post);
+
         return new PostResponse(
             post.getId(), 
             post.getTitle(), 
@@ -164,6 +169,9 @@ public class PostService {
             post.getMediaType(), 
             post.getAuthor().getId(),
             post.getAuthor().getUsername(),
+            likesCount,      
+            isLiked,         
+            commentsCount,  
             post.getCreatedAt(),
             post.getUpdatedAt()
         );
