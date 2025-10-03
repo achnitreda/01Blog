@@ -13,9 +13,11 @@ import com.rachnit.blog01.dto.request.CreatePostRequest;
 import com.rachnit.blog01.dto.request.UpdatePostRequest;
 import com.rachnit.blog01.dto.response.PostResponse;
 import com.rachnit.blog01.entity.BlogPost;
+import com.rachnit.blog01.entity.Notification;
 import com.rachnit.blog01.entity.User;
 import com.rachnit.blog01.repository.CommentRepository;
 import com.rachnit.blog01.repository.LikeRepository;
+import com.rachnit.blog01.repository.NotificationRepository;
 import com.rachnit.blog01.repository.PostRepository;
 import com.rachnit.blog01.repository.SubscriptionRepository;
 import com.rachnit.blog01.repository.UserRepository;
@@ -45,6 +47,9 @@ public class PostService {
     @Autowired
     private CommentRepository commentRepository;
 
+    @Autowired
+    private NotificationRepository notificationRepository;
+
     /**
     * Get current authenticated user
     */
@@ -67,7 +72,31 @@ public class PostService {
         );
 
         BlogPost savedPost = postRepository.save(post);
+
+        // Generate notifications for all followers
+        createNotificationsForFollowers(savedPost, currentUser);
+
         return convertToPostResponse(savedPost, currentUser);
+    }
+
+    private void createNotificationsForFollowers(BlogPost post, User author) {
+        // Find all users who follow this author
+        List<User> followers = subscriptionRepository.findFollowersByFollowing(author);
+
+        // Create a notification for each follower
+        List<Notification> notifications = new ArrayList<>();
+        for (User follower : followers) {
+            String message = author.getUsername() + " published a new post";
+            Notification notification = new Notification(
+                message,
+                "NEW_POST",
+                follower,    // recipient (the follower)
+                author,      // actor (the post author)
+                post         // the new post
+            );
+            notifications.add(notification);
+        }
+        notificationRepository.saveAll(notifications);
     }
 
     public PostResponse getPostById(Long postId) {

@@ -29,6 +29,12 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     @Query("SELECT s.following FROM Subscription s WHERE s.follower = :follower")
     List<User> findUsersFollowedBy(@Param("follower") User follower);
 
+    /**
+     * NEW: Get all followers of a user (for notification generation)
+     */
+    @Query("SELECT s.follower FROM Subscription s WHERE s.following = :user")
+    List<User> findFollowersByFollowing(@Param("user") User user);
+
     long countByFollowing(User user);
 
     long countByFollower(User user);
