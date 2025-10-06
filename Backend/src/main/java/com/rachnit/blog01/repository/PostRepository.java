@@ -26,4 +26,6 @@ public interface PostRepository extends JpaRepository<BlogPost, Long> {
 
     // Get posts from multiple authors (for personalized feed)
     List<BlogPost> findByAuthorInOrderByCreatedAtDesc(List<User> authors);
+
+    long countByHidden(boolean hidden);
 }

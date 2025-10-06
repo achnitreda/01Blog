@@ -14,7 +14,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GeneratedValue;  
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -41,10 +41,16 @@ public class User implements UserDetails {
     private Role role = Role.USER;
 
     @Column(nullable = false)
-    private boolean active = true;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private boolean banned = false;
+
+    @Column
+    private String banReason;
+    
+    @Column
+    private LocalDateTime bannedAt;
 
     // Default constructor (required by JPA)
     // you'll need it later when we fetch users from the database!
@@ -56,7 +62,7 @@ public class User implements UserDetails {
         this.email = email;
         this.password = password;
         this.role = Role.USER;
-        this.active = true;
+        this.banned = false;
         this.createdAt = LocalDateTime.now();
     }
 
@@ -87,7 +93,7 @@ public class User implements UserDetails {
 
      @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !banned;
     }
 
     @Override
@@ -97,7 +103,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return active;
+        return !banned;
     }
 
     // Getters and setters
@@ -114,8 +120,14 @@ public class User implements UserDetails {
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
 
-    public boolean isActive() { return active; }
-    public void setActive(boolean active) { this.active = active; }
+    public boolean isBanned() { return banned; }
+    public void setBanned(boolean banned) { this.banned = banned; }
+    
+    public String getBanReason() { return banReason; }
+    public void setBanReason(String banReason) { this.banReason = banReason; }
+    
+    public LocalDateTime getBannedAt() { return bannedAt; }
+    public void setBannedAt(LocalDateTime bannedAt) { this.bannedAt = bannedAt; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

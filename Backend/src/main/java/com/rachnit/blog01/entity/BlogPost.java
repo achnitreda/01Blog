@@ -43,6 +43,15 @@ public class BlogPost {
     @Column(nullable = false)
     private LocalDateTime updatedAt = LocalDateTime.now();
 
+    @Column(nullable = false)
+    private boolean hidden = false;
+
+    @Column
+    private String hiddenReason;
+
+    @Column
+    private LocalDateTime hiddenAt;
+
     // Constructors
     public BlogPost() {}
 
@@ -54,6 +63,7 @@ public class BlogPost {
         this.author = author;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.hidden = false;
     }
 
     @PreUpdate
@@ -85,4 +95,13 @@ public class BlogPost {
     
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+
+    public boolean isHidden() { return hidden; }
+    public void setHidden(boolean hidden) { this.hidden = hidden; }
+    
+    public String getHiddenReason() { return hiddenReason; }
+    public void setHiddenReason(String hiddenReason) { this.hiddenReason = hiddenReason; }
+    
+    public LocalDateTime getHiddenAt() { return hiddenAt; }
+    public void setHiddenAt(LocalDateTime hiddenAt) { this.hiddenAt = hiddenAt; }
 }

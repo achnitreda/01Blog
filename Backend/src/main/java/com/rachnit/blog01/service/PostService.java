@@ -103,7 +103,11 @@ public class PostService {
         User currentUser = getCurrentUser();
         BlogPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
-        
+
+        if (post.isHidden()) {
+            throw new RuntimeException("Post not found");
+        }
+
         return convertToPostResponse(post, currentUser);
     }
 
@@ -150,6 +154,7 @@ public class PostService {
         
         List<BlogPost> posts = postRepository.findByAuthor_IdOrderByCreatedAtDesc(userId);
         return posts.stream()
+                .filter(post -> !post.isHidden())
                 .map(post -> convertToPostResponse(post, currentUser))
                 .collect(Collectors.toList());
     }
@@ -163,6 +168,7 @@ public class PostService {
         User currentUser = getCurrentUser();
         List<BlogPost> posts = postRepository.findAllByOrderByCreatedAtDesc();
         return posts.stream()
+                .filter(post -> !post.isHidden())
                 .map(post -> convertToPostResponse(post, currentUser))
                 .collect(Collectors.toList());
     }
@@ -179,6 +185,7 @@ public class PostService {
         List<BlogPost> posts = postRepository.findByAuthorInOrderByCreatedAtDesc(followedUsers);
 
         return posts.stream()
+                .filter(post -> !post.isHidden())
                 .map(post -> convertToPostResponse(post, currentUser))
                 .collect(Collectors.toList());
     }

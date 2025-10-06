@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.rachnit.blog01.security.CustomAccessDeniedHandler;
 import com.rachnit.blog01.security.JwtAuthenticationEntryPoint;
 import com.rachnit.blog01.security.JwtRequestFilter;
 
@@ -22,6 +23,9 @@ public class SecurityConfig {
     
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
+    @Autowired
+    private CustomAccessDeniedHandler accessDeniedHandler;
     
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
@@ -45,7 +49,6 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> {
                     authz.requestMatchers("/api/auth/**").permitAll()
-                         .requestMatchers("/error").permitAll()
                          .requestMatchers("/api/admin/**").hasRole("ADMIN");
                     
                     if (databaseProperties.isEnableH2Console()) {
@@ -63,7 +66,8 @@ public class SecurityConfig {
         
         return httpSecurity
                 .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 401 - Not logged in
+                        .accessDeniedHandler(accessDeniedHandler)  // 403 - No permission
                 )
                 .sessionManagement(session -> 
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

@@ -3,7 +3,6 @@ package com.rachnit.blog01.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +42,7 @@ public class AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(Role.USER);
-        user.setActive(true);
+        user.setBanned(false);
 
         // Save to database
         User savedUser = userRepository.save(user);
@@ -53,17 +52,33 @@ public class AuthService {
         return new AuthResponse(token, savedUser.getUsername(), savedUser.getEmail(), savedUser.getRole());
     }
 
+    
+
     public AuthResponse login(LoginRequest request) {
         // Validate credentials using AuthenticationManager
         /*
         - AuthenticationManager uses UserDetailsServiceImpl to load user
         - AuthenticationManager uses PasswordEncoder to check password
         */
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-        );
 
-        User user = (User) authentication.getPrincipal();
+       String usernameOrEmail = request.getUsernameOrEmail();
+
+        // Find user by username OR email
+        User user = userRepository.findByUsername(usernameOrEmail)
+                .or(() -> userRepository.findByEmail(usernameOrEmail))
+                .orElseThrow(() -> new RuntimeException("Invalid credentials"));
+
+        // Check if user is banned
+        if (user.isBanned()) {
+            throw new RuntimeException("Your account has been banned. Reason: " + user.getBanReason());
+        }
+
+        // Authenticate using the actual username (not email)
+        // AuthenticationManager requires username for UserDetailsService
+        // Authenticate (validates password only - we already have the user)
+        authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(user.getUsername(), request.getPassword())
+        );
 
         String token = jwtService.generateToken(user);
 
