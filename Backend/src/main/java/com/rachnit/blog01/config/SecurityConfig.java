@@ -1,5 +1,9 @@
 package com.rachnit.blog01.config;
 
+import com.rachnit.blog01.security.CustomAccessDeniedHandler;
+import com.rachnit.blog01.security.JwtAuthenticationEntryPoint;
+import com.rachnit.blog01.security.JwtRequestFilter;
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,67 +16,93 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.rachnit.blog01.security.CustomAccessDeniedHandler;
-import com.rachnit.blog01.security.JwtAuthenticationEntryPoint;
-import com.rachnit.blog01.security.JwtRequestFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    
+
     @Autowired
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Autowired
     private CustomAccessDeniedHandler accessDeniedHandler;
-    
+
     @Autowired
     private JwtRequestFilter jwtRequestFilter;
-    
+
     @Autowired
     private DatabaseProperties databaseProperties;
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(
+        AuthenticationConfiguration config
+    ) throws Exception {
         return config.getAuthenticationManager();
     }
-    
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         HttpSecurity httpSecurity = http
-                .csrf(csrf -> csrf.disable())
-                .authorizeHttpRequests(authz -> {
-                    authz.requestMatchers("/api/auth/**").permitAll()
-                         .requestMatchers("/api/admin/**").hasRole("ADMIN");
-                    
-                    if (databaseProperties.isEnableH2Console()) {
-                        authz.requestMatchers("/h2-console/**").permitAll();
-                    }
-                    
-                    authz.anyRequest().authenticated();
-                });
-        
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(authz -> {
+                authz
+                    .requestMatchers("/api/auth/**")
+                    .permitAll()
+                    .requestMatchers("/api/admin/**")
+                    .hasRole("ADMIN");
+
+                if (databaseProperties.isEnableH2Console()) {
+                    authz.requestMatchers("/h2-console/**").permitAll();
+                }
+
+                authz.anyRequest().authenticated();
+            });
+
         if (databaseProperties.isEnableH2Console()) {
-            httpSecurity.headers(headers -> headers
-                    .frameOptions(frameOptions -> frameOptions.sameOrigin())
+            httpSecurity.headers(headers ->
+                headers.frameOptions(frameOptions -> frameOptions.sameOrigin())
             );
         }
-        
+
         return httpSecurity
-                .exceptionHandling(ex -> ex
+            .exceptionHandling(
+                ex ->
+                    ex
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint) // 401 - Not logged in
-                        .accessDeniedHandler(accessDeniedHandler)  // 403 - No permission
-                )
-                .sessionManagement(session -> 
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                        .accessDeniedHandler(accessDeniedHandler) // 403 - No permission
+            )
+            .sessionManagement(session ->
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
+            .addFilterBefore(
+                jwtRequestFilter,
+                UsernamePasswordAuthenticationFilter.class
+            )
+            .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+        configuration.setAllowedMethods(
+            Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")
+        );
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source =
+            new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
