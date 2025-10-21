@@ -1,0 +1,72 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="logo">
+      <h1>01Blog</h1>
+      <p class="tagline">Share your thoughts with the world</p>
+    </div>
+
+    @if (errorMessage()) {
+    <div class="error-alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMessage() }}</span>
+    </div>
+    }
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Username or Email</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="usernameOrEmail"
+          placeholder="Enter your username or email"
+          autocomplete="username"
+        />
+        <mat-icon matPrefix>person</mat-icon>
+        @if (hasError('usernameOrEmail', 'required') || hasError('usernameOrEmail', 'minlength')) {
+        <mat-error>{{ getErrorMessage('usernameOrEmail') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          [type]="hidePassword() ? 'password' : 'text'"
+          formControlName="password"
+          placeholder="Enter your password"
+          autocomplete="current-password"
+        />
+        <mat-icon matPrefix>lock</mat-icon>
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="'Hide password'"
+        >
+          <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (hasError('password', 'required') || hasError('password', 'minlength')) {
+        <mat-error>{{ getErrorMessage('password') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <button mat-raised-button type="submit" class="submit-button" [disabled]="isLoading()">
+        @if (isLoading()) {
+        <mat-spinner diameter="20"></mat-spinner>
+        <span>Logging in...</span>
+        } @else {
+        <span>Login</span>
+        }
+      </button>
+    </form>
+
+    <div class="register-link">
+      <p>
+        Don't have an account?
+        <a routerLink="/register">Create one</a>
+      </p>
+    </div>
+  </div>
+</div>

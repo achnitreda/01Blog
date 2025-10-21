@@ -1,0 +1,326 @@
+.register-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dae0e6;
+  padding: 16px;
+
+  @media (max-width: 576px) {
+    padding: 8px;
+  }
+}
+
+.register-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 48px 32px;
+  width: 100%;
+  max-width: 480px; // Slightly wider than login for more content
+  animation: slideUp 0.3s ease-out;
+
+  @media (max-width: 576px) {
+    padding: 32px 24px;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  @media (min-width: 577px) and (max-width: 768px) {
+    padding: 40px 28px;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo {
+  text-align: center;
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #ff4500;
+    margin: 0 0 8px 0;
+    letter-spacing: -0.5px;
+
+    @media (max-width: 576px) {
+      font-size: 28px;
+    }
+  }
+
+  .tagline {
+    font-size: 14px;
+    color: #7c7c7c;
+    margin: 0;
+  }
+}
+
+.error-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #fff4f4;
+  border: 1px solid #ffd6d6;
+  border-radius: 8px;
+  color: #ea0027;
+  margin-bottom: 24px;
+  animation: shake 0.3s;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  span {
+    font-size: 14px;
+    flex: 1;
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+// Material Form Field Customization
+::ng-deep {
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      background: #f6f7f8;
+    }
+
+    &.mat-focused {
+      .mat-mdc-text-field-wrapper {
+        background: white;
+      }
+
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: #ff4500 !important;
+      }
+    }
+
+    &.mat-form-field-invalid {
+      .mdc-notched-outline__leading,
+      .mdc-notched-outline__notch,
+      .mdc-notched-outline__trailing {
+        border-color: #ea0027 !important;
+      }
+    }
+  }
+
+  .mat-icon {
+    color: #7c7c7c;
+  }
+
+  .mat-focused .mat-icon {
+    color: #ff4500;
+  }
+
+  // Success icon (green checkmark)
+  .success-icon {
+    color: #46d160 !important;
+  }
+}
+
+.password-strength {
+  margin: -8px 0 16px 0;
+
+  .strength-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+
+    .strength-label {
+      color: #7c7c7c;
+    }
+
+    .strength-text {
+      font-weight: 500;
+
+      &.strength-0 {
+        color: #7c7c7c;
+      }
+      &.strength-29 {
+        color: #ea0027;
+      }
+      &.strength-59 {
+        color: #ffb000;
+      }
+      &.strength-79 {
+        color: #0079d3;
+      }
+      &.strength-100 {
+        color: #46d160;
+      }
+    }
+  }
+
+  ::ng-deep .mat-mdc-progress-bar {
+    height: 6px;
+    border-radius: 3px;
+    overflow: hidden;
+
+    .mdc-linear-progress__bar-inner {
+      border-top-width: 6px;
+    }
+  }
+}
+
+.password-requirements {
+  background: #f6f7f8;
+  border-radius: 8px;
+  padding: 16px;
+  margin: -8px 0 16px 0;
+
+  .requirements-title {
+    font-size: 12px;
+    color: #7c7c7c;
+    margin: 0 0 12px 0;
+    font-weight: 500;
+  }
+
+  .requirements-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #7c7c7c;
+      margin: 6px 0;
+      transition: color 0.2s;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #edeff1;
+        transition: color 0.2s;
+      }
+
+      &.valid {
+        color: #46d160;
+
+        mat-icon {
+          color: #46d160;
+        }
+      }
+    }
+  }
+}
+
+.submit-button {
+  width: 100%;
+  height: 48px;
+  background: #ff4500 !important;
+  color: white !important;
+  border-radius: 24px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-top: 8px;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(255, 69, 0, 0.3);
+
+  &:hover:not(:disabled) {
+    background: #ff3600 !important;
+    box-shadow: 0 4px 12px rgba(255, 69, 0, 0.4);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  mat-spinner {
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  ::ng-deep .mat-mdc-progress-spinner circle {
+    stroke: white !important;
+  }
+
+  @media (max-width: 576px) {
+    height: 44px;
+  }
+}
+
+.login-link {
+  text-align: center;
+  margin-top: 24px;
+
+  p {
+    font-size: 14px;
+    color: #7c7c7c;
+    margin: 0;
+
+    a {
+      color: #0079d3;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+
+      &:hover {
+        color: #0064c5;
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// Responsive Typography
+@media (max-width: 576px) {
+  .register-card {
+    font-size: 14px;
+  }
+
+  .submit-button {
+    font-size: 15px;
+  }
+
+  .password-requirements .requirements-list li {
+    font-size: 12px;
+  }
+}

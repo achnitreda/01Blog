@@ -1,0 +1,141 @@
+<div class="register-container">
+  <div class="register-card">
+    <div class="logo">
+      <h1>Join 01Blog</h1>
+      <p class="tagline">Create your account and start sharing</p>
+    </div>
+
+    @if (errorMessage()) {
+    <div class="error-alert">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ errorMessage() }}</span>
+    </div>
+    }
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Username</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="username"
+          placeholder="Choose a unique username"
+          autocomplete="username"
+        />
+        <mat-icon matPrefix>person</mat-icon>
+        @if (registerForm.get('username')?.touched && registerForm.get('username')?.invalid) {
+        <mat-error>{{ getErrorMessage('username') }}</mat-error>
+        } @if (registerForm.get('username')?.valid && registerForm.get('username')?.value) {
+        <mat-icon matSuffix class="success-icon">check_circle</mat-icon>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          type="email"
+          formControlName="email"
+          placeholder="your.email@example.com"
+          autocomplete="email"
+        />
+        <mat-icon matPrefix>email</mat-icon>
+        @if (registerForm.get('email')?.touched && registerForm.get('email')?.invalid) {
+        <mat-error>{{ getErrorMessage('email') }}</mat-error>
+        } @if (registerForm.get('email')?.valid && registerForm.get('email')?.value) {
+        <mat-icon matSuffix class="success-icon">check_circle</mat-icon>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          [type]="hidePassword() ? 'password' : 'text'"
+          formControlName="password"
+          placeholder="Create a strong password"
+          autocomplete="new-password"
+        />
+        <mat-icon matPrefix>lock</mat-icon>
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="togglePasswordVisibility()"
+          [attr.aria-label]="'Hide password'"
+        >
+          <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (registerForm.get('password')?.touched && registerForm.get('password')?.invalid) {
+        <mat-error>{{ getErrorMessage('password') }}</mat-error>
+        }
+      </mat-form-field>
+
+      @if (registerForm.get('password')?.value) {
+      <div class="password-strength">
+        <div class="strength-header">
+          <span class="strength-label">Password Strength:</span>
+          <span class="strength-text" [class]="'strength-' + passwordStrength()">
+            {{ passwordStrengthText() }}
+          </span>
+        </div>
+        <mat-progress-bar
+          mode="determinate"
+          [value]="passwordStrength()"
+          [color]="getPasswordStrengthColor()"
+        ></mat-progress-bar>
+      </div>
+      }
+
+      <div class="password-requirements">
+        <p class="requirements-title">Password must contain:</p>
+        <ul class="requirements-list">
+          <li [class.valid]="getPasswordRequirements().length">
+            <mat-icon
+              >{{ getPasswordRequirements().length ? 'check_circle' : 'radio_button_unchecked'
+              }}</mat-icon
+            >
+            <span>At least 6 characters</span>
+          </li>
+          <li [class.valid]="getPasswordRequirements().uppercase">
+            <mat-icon
+              >{{ getPasswordRequirements().uppercase ? 'check_circle' : 'radio_button_unchecked'
+              }}</mat-icon
+            >
+            <span>One uppercase letter (A-Z)</span>
+          </li>
+          <li [class.valid]="getPasswordRequirements().lowercase">
+            <mat-icon
+              >{{ getPasswordRequirements().lowercase ? 'check_circle' : 'radio_button_unchecked'
+              }}</mat-icon
+            >
+            <span>One lowercase letter (a-z)</span>
+          </li>
+          <li [class.valid]="getPasswordRequirements().number">
+            <mat-icon
+              >{{ getPasswordRequirements().number ? 'check_circle' : 'radio_button_unchecked'
+              }}</mat-icon
+            >
+            <span>One number (0-9)</span>
+          </li>
+        </ul>
+      </div>
+
+      <button mat-raised-button type="submit" class="submit-button" [disabled]="isLoading()">
+        @if (isLoading()) {
+        <mat-spinner diameter="20"></mat-spinner>
+        <span>Creating account...</span>
+        } @else {
+        <span>Create Account</span>
+        }
+      </button>
+    </form>
+
+    <div class="login-link">
+      <p>
+        Already have an account?
+        <a routerLink="/login">Sign in</a>
+      </p>
+    </div>
+  </div>
+</div>
