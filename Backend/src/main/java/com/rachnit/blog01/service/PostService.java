@@ -1,14 +1,5 @@
 package com.rachnit.blog01.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Service;
-
 import com.rachnit.blog01.dto.request.CreatePostRequest;
 import com.rachnit.blog01.dto.request.UpdatePostRequest;
 import com.rachnit.blog01.dto.response.PostResponse;
@@ -21,20 +12,26 @@ import com.rachnit.blog01.repository.NotificationRepository;
 import com.rachnit.blog01.repository.PostRepository;
 import com.rachnit.blog01.repository.SubscriptionRepository;
 import com.rachnit.blog01.repository.UserRepository;
-
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 
 @Service
 /**
  * Keeps Hibernate session open during entire method execution
  * Allows lazy relationships to load when accessed
  */
-@Transactional 
+@Transactional
 public class PostService {
 
     @Autowired
     private PostRepository postRepository;
-    
+
     @Autowired
     private UserRepository userRepository;
 
@@ -51,13 +48,15 @@ public class PostService {
     private NotificationRepository notificationRepository;
 
     /**
-    * Get current authenticated user
-    */
+     * Get current authenticated user
+     */
     private User getCurrentUser() {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
-            return userRepository.findByUsername(username)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+        Authentication authentication =
+            SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        return userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public PostResponse createPost(CreatePostRequest request) {
@@ -81,7 +80,9 @@ public class PostService {
 
     private void createNotificationsForFollowers(BlogPost post, User author) {
         // Find all users who follow this author
-        List<User> followers = subscriptionRepository.findFollowersByFollowing(author);
+        List<User> followers = subscriptionRepository.findFollowersByFollowing(
+            author
+        );
 
         // Create a notification for each follower
         List<Notification> notifications = new ArrayList<>();
@@ -90,9 +91,9 @@ public class PostService {
             Notification notification = new Notification(
                 message,
                 "NEW_POST",
-                follower,    // recipient (the follower)
-                author,      // actor (the post author)
-                post         // the new post
+                follower, // recipient (the follower)
+                author, // actor (the post author)
+                post // the new post
             );
             notifications.add(notification);
         }
@@ -101,8 +102,9 @@ public class PostService {
 
     public PostResponse getPostById(Long postId) {
         User currentUser = getCurrentUser();
-        BlogPost post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
+        BlogPost post = postRepository
+            .findById(postId)
+            .orElseThrow(() -> new RuntimeException("Post not found"));
 
         if (post.isHidden()) {
             throw new RuntimeException("Post not found");
@@ -114,10 +116,15 @@ public class PostService {
     public PostResponse updatePost(Long postId, UpdatePostRequest request) {
         User currentUser = getCurrentUser();
 
-         // Verify ownership
-        BlogPost post = postRepository.findByIdAndAuthor(postId, currentUser)
-                .orElseThrow(() -> new RuntimeException("Post not found or you don't have permission to edit it"));
-        
+        // Verify ownership
+        BlogPost post = postRepository
+            .findByIdAndAuthor(postId, currentUser)
+            .orElseThrow(() ->
+                new RuntimeException(
+                    "Post not found or you don't have permission to edit it"
+                )
+            );
+
         // Update only provided fields
         if (request.getTitle() != null) {
             post.setTitle(request.getTitle());
@@ -138,25 +145,33 @@ public class PostService {
 
     public void deletePost(Long postId) {
         User currentUser = getCurrentUser();
-        
+
         // Verify ownership
-        BlogPost post = postRepository.findByIdAndAuthor(postId, currentUser)
-                .orElseThrow(() -> new RuntimeException("Post not found or you don't have permission to delete it"));
-        
+        BlogPost post = postRepository
+            .findByIdAndAuthor(postId, currentUser)
+            .orElseThrow(() ->
+                new RuntimeException(
+                    "Post not found or you don't have permission to delete it"
+                )
+            );
+
         postRepository.delete(post);
     }
 
     public List<PostResponse> getUserPosts(Long userId) {
         User currentUser = getCurrentUser();
         // Verify user exists
-        userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        List<BlogPost> posts = postRepository.findByAuthor_IdOrderByCreatedAtDesc(userId);
-        return posts.stream()
-                .filter(post -> !post.isHidden())
-                .map(post -> convertToPostResponse(post, currentUser))
-                .collect(Collectors.toList());
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        List<BlogPost> posts =
+            postRepository.findByAuthor_IdOrderByCreatedAtDesc(userId);
+        return posts
+            .stream()
+            .filter(post -> !post.isHidden())
+            .map(post -> convertToPostResponse(post, currentUser))
+            .collect(Collectors.toList());
     }
 
     public List<PostResponse> getMyPosts() {
@@ -167,47 +182,56 @@ public class PostService {
     public List<PostResponse> getAllPosts() {
         User currentUser = getCurrentUser();
         List<BlogPost> posts = postRepository.findAllByOrderByCreatedAtDesc();
-        return posts.stream()
-                .filter(post -> !post.isHidden())
-                .map(post -> convertToPostResponse(post, currentUser))
-                .collect(Collectors.toList());
+        return posts
+            .stream()
+            .filter(post -> !post.isHidden())
+            .map(post -> convertToPostResponse(post, currentUser))
+            .collect(Collectors.toList());
     }
 
     public List<PostResponse> getPersonalizedFeed() {
-       User currentUser = getCurrentUser();
+        User currentUser = getCurrentUser();
 
-        List<User> followedUsers = subscriptionRepository.findUsersFollowedBy(currentUser);
+        List<User> followedUsers = subscriptionRepository.findUsersFollowedBy(
+            currentUser
+        );
+
+        followedUsers.add(currentUser);
 
         if (followedUsers.isEmpty()) {
             return new ArrayList<>();
-        } 
+        }
 
-        List<BlogPost> posts = postRepository.findByAuthorInOrderByCreatedAtDesc(followedUsers);
+        List<BlogPost> posts =
+            postRepository.findByAuthorInOrderByCreatedAtDesc(followedUsers);
 
-        return posts.stream()
-                .filter(post -> !post.isHidden())
-                .map(post -> convertToPostResponse(post, currentUser))
-                .collect(Collectors.toList());
+        return posts
+            .stream()
+            .filter(post -> !post.isHidden())
+            .map(post -> convertToPostResponse(post, currentUser))
+            .collect(Collectors.toList());
     }
 
-    private PostResponse convertToPostResponse(BlogPost post, User currentUser) {
-
+    private PostResponse convertToPostResponse(
+        BlogPost post,
+        User currentUser
+    ) {
         long likesCount = likeRepository.countByPost(post);
         boolean isLiked = likeRepository.existsByUserAndPost(currentUser, post);
 
         long commentsCount = commentRepository.countByPost(post);
 
         return new PostResponse(
-            post.getId(), 
-            post.getTitle(), 
-            post.getContent(), 
-            post.getMediaUrl(), 
-            post.getMediaType(), 
+            post.getId(),
+            post.getTitle(),
+            post.getContent(),
+            post.getMediaUrl(),
+            post.getMediaType(),
             post.getAuthor().getId(),
             post.getAuthor().getUsername(),
-            likesCount,      
-            isLiked,         
-            commentsCount,  
+            likesCount,
+            isLiked,
+            commentsCount,
             post.getCreatedAt(),
             post.getUpdatedAt()
         );
