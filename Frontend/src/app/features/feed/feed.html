@@ -1,0 +1,38 @@
+<div class="feed-container">
+  <div class="feed-header">
+    <h1>Your Feed</h1>
+    <p>Welcome, <strong>{{ username }}</strong>!</p>
+  </div>
+
+  <!-- Post Cards -->
+  <div class="posts-list">
+    @if (isLoading()) {
+    <div class="loading">
+      <p>Loading posts...</p>
+    </div>
+    } @else if (posts().length === 0) {
+    <div class="empty-state">
+      <mat-icon>post_add</mat-icon>
+      <h3>No posts yet</h3>
+      <p>Be the first to share something!</p>
+      <button mat-raised-button class="btn-primary" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        <span>Create Post</span>
+      </button>
+    </div>
+    } @else { @for (post of posts(); track post.id) {
+    <app-post-card
+      [post]="post"
+      (onLike)="handleLike($event)"
+      (onEdit)="handleEdit($event)"
+      (onDelete)="handleDelete($event)"
+      (onCommentClick)="handleCommentClick($event)"
+    ></app-post-card>
+    } }
+  </div>
+
+  <!-- Floating Action Button (FAB) -->
+  <button mat-fab class="fab-button" (click)="openCreateDialog()" aria-label="Create new post">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

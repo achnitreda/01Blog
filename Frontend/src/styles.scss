@@ -1,39 +1,742 @@
+// ============================================
+// 01Blog - Global Styles
+// Design: Reddit colors + Medium clean layout
+// ============================================
 
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+@use 'sass:color';
 
+// ============================================
+// VARIABLES
+// ============================================
+
+// Color Palette (Reddit-inspired)
+$primary-orange: #ff4500; // Reddit orange (primary actions)
+$primary-blue: #0079d3; // Reddit blue (links, secondary)
+$background-gray: #dae0e6; // Light gray background
+$card-white: #ffffff; // White cards/content
+$border-gray: #edeff1; // Subtle borders
+$text-primary: #1a1a1b; // Dark text
+$text-secondary: #7c7c7c; // Gray text
+$text-muted: #a8a8a8; // Lighter gray text
+
+// Status Colors
+$success-green: #46d160; // Success/valid
+$error-red: #ea0027; // Errors/delete
+$warning-yellow: #ffb000; // Warnings
+
+// Shadows (Medium-style)
+$shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+$shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+$shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.15);
+
+// Spacing Scale
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+$spacing-xxl: 48px;
+
+// Border Radius
+$radius-sm: 4px;
+$radius-md: 8px;
+$radius-lg: 16px;
+$radius-round: 24px;
+
+// Responsive Breakpoints
+$breakpoint-xs: 320px; // Small phones
+$breakpoint-sm: 576px; // Large phones
+$breakpoint-md: 768px; // Tablets
+$breakpoint-lg: 992px; // Laptops
+$breakpoint-xl: 1200px; // Desktops
+$breakpoint-xxl: 1400px; // Large desktops
+
+// Z-index Scale
+$z-dropdown: 1000;
+$z-sticky: 1020;
+$z-fixed: 1030;
+$z-modal-backdrop: 1040;
+$z-modal: 1050;
+$z-popover: 1060;
+$z-tooltip: 1070;
+
+// ============================================
+// MATERIAL THEME
+// ============================================
+
+// Define custom Material palettes
+$custom-primary: (
+  50: #ffe8e0,
+  100: #ffc6b3,
+  200: #ffa180,
+  300: #ff7c4d,
+  400: #ff6026,
+  500: #ff4500,
+  // Main Reddit orange
+  600: #ff3e00,
+  700: #ff3600,
+  800: #ff2e00,
+  900: #ff1f00,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: white,
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+  ),
+);
+
+$custom-accent: (
+  50: #e0f2fe,
+  100: #b3dffe,
+  200: #80cafd,
+  300: #4db4fc,
+  400: #26a4fb,
+  500: #0079d3,
+  // Reddit blue
+  600: #0070cc,
+  700: #0064c5,
+  800: #0059bf,
+  900: #0045b3,
+  contrast: (
+    50: rgba(black, 0.87),
+    100: rgba(black, 0.87),
+    200: rgba(black, 0.87),
+    300: white,
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+  ),
+);
+
+// Create Material theme
 html {
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
+  @include mat.theme(
+    (
+      color: (
+        primary: $custom-primary,
+        tertiary: $custom-accent,
+      ),
+      typography: Roboto,
+      density: 0,
+    )
+  );
 }
 
+// ============================================
+// RESET & BASE STYLES
+// ============================================
+
+// Box sizing
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// Body
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
+  padding: 0;
+  font-family:
+    'Roboto',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: $text-primary;
+  background-color: $background-gray;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
-/* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// Typography
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 32px;
+}
+h2 {
+  font-size: 28px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 20px;
+}
+h5 {
+  font-size: 18px;
+}
+h6 {
+  font-size: 16px;
+}
+
+p {
+  margin: 0 0 $spacing-md 0;
+}
+
+a {
+  color: $primary-blue;
+  text-decoration: none;
+  transition: color 0.2s;
+
+  &:hover {
+    color: color.adjust($primary-blue, $lightness: -10%);
+    text-decoration: underline;
+  }
+}
+
+// ============================================
+// UTILITY CLASSES
+// ============================================
+
+// Container
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+
+  @media (min-width: $breakpoint-md) {
+    padding: 0 $spacing-xl;
+  }
+}
+
+// Content Container (Medium-style)
+.content-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0 $spacing-md;
+}
+
+// Spacing utilities
+.mt-xs {
+  margin-top: $spacing-xs;
+}
+.mt-sm {
+  margin-top: $spacing-sm;
+}
+.mt-md {
+  margin-top: $spacing-md;
+}
+.mt-lg {
+  margin-top: $spacing-lg;
+}
+.mt-xl {
+  margin-top: $spacing-xl;
+}
+
+.mb-xs {
+  margin-bottom: $spacing-xs;
+}
+.mb-sm {
+  margin-bottom: $spacing-sm;
+}
+.mb-md {
+  margin-bottom: $spacing-md;
+}
+.mb-lg {
+  margin-bottom: $spacing-lg;
+}
+.mb-xl {
+  margin-bottom: $spacing-xl;
+}
+
+.p-xs {
+  padding: $spacing-xs;
+}
+.p-sm {
+  padding: $spacing-sm;
+}
+.p-md {
+  padding: $spacing-md;
+}
+.p-lg {
+  padding: $spacing-lg;
+}
+.p-xl {
+  padding: $spacing-xl;
+}
+
+// Text utilities
+.text-center {
+  text-align: center;
+}
+.text-left {
+  text-align: left;
+}
+.text-right {
+  text-align: right;
+}
+
+.text-primary {
+  color: $text-primary;
+}
+.text-secondary {
+  color: $text-secondary;
+}
+.text-muted {
+  color: $text-muted;
+}
+
+.text-sm {
+  font-size: 14px;
+}
+.text-base {
+  font-size: 16px;
+}
+.text-lg {
+  font-size: 18px;
+}
+.text-xl {
+  font-size: 20px;
+}
+
+.font-light {
+  font-weight: 300;
+}
+.font-normal {
+  font-weight: 400;
+}
+.font-medium {
+  font-weight: 500;
+}
+.font-bold {
+  font-weight: 700;
+}
+
+// Display utilities
+.d-none {
+  display: none;
+}
+.d-block {
+  display: block;
+}
+.d-flex {
+  display: flex;
+}
+.d-grid {
+  display: grid;
+}
+
+// Flexbox utilities
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// Responsive utilities
+.hide-mobile {
+  @media (max-width: $breakpoint-md - 1) {
+    display: none !important;
+  }
+}
+
+.hide-desktop {
+  @media (min-width: $breakpoint-md) {
+    display: none !important;
+  }
+}
+
+.show-mobile {
+  display: none !important;
+
+  @media (max-width: $breakpoint-md - 1) {
+    display: block !important;
+  }
+}
+
+// Card styles (common pattern)
+.card {
+  background: $card-white;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  padding: $spacing-lg;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
+
+  @media (max-width: $breakpoint-sm) {
+    border-radius: 0;
+    padding: $spacing-md;
+  }
+}
+
+// Button utilities
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: none;
+  border-radius: $radius-round;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+.btn-primary {
+  background: $primary-orange;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: color.adjust($primary-orange, $lightness: -5%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba($primary-orange, 0.3);
+  }
+}
+
+.btn-secondary {
+  background: white;
+  color: $primary-blue;
+  border: 2px solid $primary-blue;
+
+  &:hover:not(:disabled) {
+    background: $primary-blue;
+    color: white;
+  }
+}
+
+// Loading state
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: $spacing-xl;
+  color: $text-secondary;
+}
+
+// Empty state
+.empty-state {
+  text-align: center;
+  padding: $spacing-xxl $spacing-lg;
+  color: $text-secondary;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: $text-muted;
+    margin-bottom: $spacing-md;
+  }
+
+  h3 {
+    margin-bottom: $spacing-sm;
+    color: $text-primary;
+  }
+
+  p {
+    margin-bottom: $spacing-lg;
+  }
+}
+
+// ============================================
+// SCROLLBAR STYLING
+// ============================================
+
+// Custom scrollbar (WebKit browsers)
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: $background-gray;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color.adjust($text-secondary, $lightness: 20%);
+  border-radius: 6px;
+  border: 3px solid $background-gray;
+
+  &:hover {
+    background: $text-secondary;
+  }
+}
+
+// ============================================
+// MATERIAL COMPONENT OVERRIDES
+// ============================================
+
+// Material Card
+.mat-mdc-card {
+  box-shadow: $shadow-sm !important;
+
+  &:hover {
+    box-shadow: $shadow-md !important;
+  }
+}
+
+// Material Button
+.mat-mdc-button,
+.mat-mdc-raised-button,
+.mat-mdc-fab,
+.mat-mdc-mini-fab {
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+// Material Form Field
+.mat-mdc-form-field {
+  width: 100%;
+
+  // Focus color
+  &.mat-focused {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $primary-orange !important;
+    }
+
+    .mat-mdc-floating-label {
+      color: $primary-orange !important;
+    }
+  }
+
+  // Error state
+  &.mat-form-field-invalid {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: $error-red !important;
+    }
+  }
+}
+
+// Material Dialog
+.mat-mdc-dialog-container {
+  border-radius: $radius-md !important;
+  padding: 0 !important;
+}
+
+// Material Menu
+.mat-mdc-menu-panel {
+  border-radius: $radius-md !important;
+  box-shadow: $shadow-lg !important;
+}
+
+// Material Snackbar
+.mat-mdc-snack-bar-container {
+  &.success-snackbar {
+    --mdc-snackbar-container-color: #{$success-green};
+    --mat-snack-bar-button-color: white;
+  }
+
+  &.error-snackbar {
+    --mdc-snackbar-container-color: #{$error-red};
+    --mat-snack-bar-button-color: white;
+  }
+}
+
+// Material Progress Bar
+.mat-mdc-progress-bar {
+  &.success-bar {
+    --mdc-linear-progress-active-indicator-color: #{$success-green};
+  }
+
+  &.error-bar {
+    --mdc-linear-progress-active-indicator-color: #{$error-red};
+  }
+}
+
+// ============================================
+// ACCESSIBILITY
+// ============================================
+
+// Focus styles
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid $primary-blue;
+  outline-offset: 2px;
+}
+
+// Skip to content link (for screen readers)
+.skip-to-content {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: $primary-orange;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  z-index: 100;
+
+  &:focus {
+    top: 0;
+  }
+}
+
+// Screen reader only
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Animation utilities
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+// ============================================
+// PRINT STYLES
+// ============================================
+
+@media print {
+  body {
+    background: white;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}
+
+// ============================================
+// RESPONSIVE TYPOGRAPHY
+// ============================================
+
+@media (max-width: $breakpoint-sm) {
+  body {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 24px;
+  }
+  h2 {
+    font-size: 22px;
+  }
+  h3 {
+    font-size: 20px;
+  }
+  h4 {
+    font-size: 18px;
+  }
+  h5 {
+    font-size: 16px;
+  }
+  h6 {
+    font-size: 14px;
+  }
+}
+
+// ============================================
+// SELECTION STYLES
+// ============================================
+
+::selection {
+  background: rgba($primary-orange, 0.2);
+  color: $text-primary;
+}
+
+::-moz-selection {
+  background: rgba($primary-orange, 0.2);
+  color: $text-primary;
+}

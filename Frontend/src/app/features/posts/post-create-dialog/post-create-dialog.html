@@ -1,0 +1,126 @@
+<div class="dialog-container">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>Create New Post</h2>
+    <button mat-icon-button (click)="onCancel()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  @if (errorMessage()) {
+  <div class="error-alert">
+    <mat-icon>error_outline</mat-icon>
+    <span>{{ errorMessage() }}</span>
+  </div>
+  }
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="postForm">
+      <!-- Title Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Post Title</mat-label>
+        <input
+          matInput
+          type="text"
+          formControlName="title"
+          placeholder="Give your post a catchy title..."
+          maxlength="255"
+        />
+        <mat-hint align="end">{{ getTitleCharCount() }}</mat-hint>
+        @if (postForm.get('title')?.touched && postForm.get('title')?.invalid) {
+        <mat-error>{{ getErrorMessage('title') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Content Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Content</mat-label>
+        <textarea
+          matInput
+          formControlName="content"
+          placeholder="What's on your mind? Share your thoughts..."
+          rows="6"
+          maxlength="10000"
+        ></textarea>
+        <mat-hint align="end">{{ getContentCharCount() }}</mat-hint>
+        @if (postForm.get('content')?.touched && postForm.get('content')?.invalid) {
+        <mat-error>{{ getErrorMessage('content') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Media URL Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Media URL</mat-label>
+        <input
+          matInput
+          type="url"
+          formControlName="mediaUrl"
+          placeholder="https://example.com/image.jpg"
+        />
+        <mat-icon matPrefix>image</mat-icon>
+        <mat-hint>Paste a direct link to an image or video</mat-hint>
+        @if (postForm.get('mediaUrl')?.touched && postForm.get('mediaUrl')?.invalid) {
+        <mat-error>{{ getErrorMessage('mediaUrl') }}</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Media Type -->
+      <div class="media-type-section">
+        <label class="section-label">Media Type *</label>
+        <mat-radio-group formControlName="mediaType" class="media-type-group">
+          <mat-radio-button [value]="MediaType.IMAGE" class="media-radio">
+            <mat-icon>image</mat-icon>
+            <span>Image</span>
+          </mat-radio-button>
+          <mat-radio-button [value]="MediaType.VIDEO" class="media-radio">
+            <mat-icon>videocam</mat-icon>
+            <span>Video</span>
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <!-- Media Preview -->
+      @if (mediaPreview()) {
+      <div class="media-preview-section">
+        <label class="section-label">Preview</label>
+        <div class="media-preview">
+          @if (isImagePreview()) {
+          <img [src]="mediaPreview()!" alt="Media preview" (error)="mediaPreview.set(null)" />
+          } @else if (isVideoPreview()) {
+          <video [src]="mediaPreview()!" controls preload="metadata">
+            Your browser does not support the video tag.
+          </video>
+          }
+        </div>
+      </div>
+      }
+    </form>
+  </mat-dialog-content>
+
+  <!-- Actions -->
+  <mat-dialog-actions class="dialog-actions">
+    <button
+      mat-button
+      type="button"
+      (click)="onCancel()"
+      [disabled]="isSubmitting()"
+      class="cancel-btn"
+    >
+      Cancel
+    </button>
+    <button
+      mat-raised-button
+      type="button"
+      (click)="onSubmit()"
+      [disabled]="postForm.invalid || isSubmitting()"
+      class="submit-btn"
+    >
+      @if (isSubmitting()) {
+      <mat-spinner diameter="20"></mat-spinner>
+      <span>Posting...</span>
+      } @else {
+      <mat-icon>send</mat-icon>
+      }
+      <span>Post</span>
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -1,5 +1,5 @@
-<!--<h1>{{ title() }}</h1>-->
-
-<!--<button (click)="testLogout()">🧪 Test Register</button>-->
+@if (isLoggedIn()) {
+<app-navbar></app-navbar>
+}
 
 <router-outlet />

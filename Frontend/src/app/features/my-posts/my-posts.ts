@@ -1,25 +1,25 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-
 import { Post } from '../../shared/models';
 import { AuthService, PostService } from '../../core/services';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PostCreateDialog } from '../posts/post-create-dialog/post-create-dialog';
 import { PostEditDialog } from '../posts/post-edit-dialog/post-edit-dialog';
 import { PostCard } from '../posts/post-card/post-card';
+import { CommonModule } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-  selector: 'app-feed',
+  selector: 'app-my-posts',
   imports: [CommonModule, PostCard, MatDialogModule, MatButtonModule, MatIconModule],
-  templateUrl: './feed.html',
-  styleUrl: './feed.scss',
+  templateUrl: './my-posts.html',
+  styleUrl: './my-posts.scss',
 })
-export class Feed implements OnInit {
+export class MyPosts implements OnInit {
   username: string;
-  posts = signal<Post[]>([]);
   isLoading = signal(true);
+  posts = signal<Post[]>([]);
+  errorMessage = signal<string | null>(null);
 
   constructor(
     private authService: AuthService,
@@ -30,34 +30,26 @@ export class Feed implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('📰 Feed component initialized');
-    this.loadFeed();
+    this.loadMyPosts();
   }
 
-  /**
-   * Load personalized feed
-   */
-  loadFeed(): void {
+  loadMyPosts(): void {
     this.isLoading.set(true);
+    this.errorMessage.set(null);
 
-    this.postService.getPersonalizedFeed().subscribe({
+    this.postService.getMyPosts().subscribe({
       next: (posts) => {
-        console.log(posts);
         this.posts.set(posts);
         this.isLoading.set(false);
-        console.log(`✅ Loaded ${posts.length} posts`);
       },
       error: (error) => {
-        console.error('❌ Failed to load feed:', error);
         this.isLoading.set(false);
+        this.errorMessage.set(error.message || 'Failed to load your posts. Please try again.');
         this.posts.set([]);
       },
     });
   }
 
-  /**
-   * Open create post dialog
-   */
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(PostCreateDialog, {
       width: '600px',
@@ -69,21 +61,14 @@ export class Feed implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('✅ Post created:', result);
-        // Post is already added to feed by PostService
-        // Optionally refresh feed to ensure sync
-        this.loadFeed();
+        this.loadMyPosts();
       }
     });
   }
 
-  /**
-   * Handle like toggle
-   */
   handleLike(post: Post): void {
     console.log('❤️ Toggling like for post:', post.id);
 
-    // Store original state for rollback if needed
     const originalIsLiked = post.isLiked;
     const originalLikesCount = post.likesCount;
 
@@ -107,7 +92,7 @@ export class Feed implements OnInit {
       error: (error) => {
         console.error('❌ Failed to toggle like:', error);
 
-        // Rollback on error - restore original state
+        // Rollback on error
         const rolledBackPosts = this.posts().map((p) => {
           if (p.id === post.id) {
             return {
@@ -126,55 +111,52 @@ export class Feed implements OnInit {
     });
   }
 
-  /**
-   * Handle edit post
-   */
   handleEdit(post: Post): void {
-    console.log('✏️ Edit post:', post.id);
     const dialogRef = this.dialog.open(PostEditDialog, {
       width: '600px',
       maxWidth: '95vw',
       maxHeight: '90vh',
       disableClose: false,
       autoFocus: true,
-      data: { post: post }, // ← Pass post data to dialog
+      data: { post: post },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('✅ Post updated:', result);
-        // Post is already updated in feed by PostService
-        // Optionally refresh to ensure sync
-        this.loadFeed();
+        this.loadMyPosts();
       }
     });
   }
 
-  /**
-   * Handle delete post
-   */
   handleDelete(post: Post): void {
-    console.log('🗑️ Delete post:', post.id);
+    const confirmDelete = confirm(
+      `Are you sure you want to delete "${post.title}"?\n\nThis action cannot be undone.`,
+    );
 
-    if (confirm(`Are you sure you want to delete "${post.title}"?`)) {
-      this.postService.deletePost(post.id).subscribe({
-        next: () => {
-          console.log('✅ Post deleted successfully');
-          this.loadFeed();
-        },
-        error: (error) => {
-          console.error('❌ Failed to delete post:', error);
-          alert('Failed to delete post. Please try again.');
-        },
-      });
-    }
+    if (!confirmDelete) return;
+
+    this.postService.deletePost(post.id).subscribe({
+      next: () => {
+        console.log('✅ Post deleted successfully');
+        this.loadMyPosts();
+      },
+      error: (error) => {
+        console.error('❌ Failed to delete post:', error);
+        alert('Failed to delete post. Please try again.');
+      },
+    });
   }
 
-  /**
-   * Handle comment click
-   */
   handleCommentClick(post: Post): void {
     console.log('💬 Comment on post:', post.id);
-    // TODO: Navigate to post detail or open comment section (Phase 3)
+    // TODO: Navigate to post detail or open comment section
+  }
+
+  getTotalLikes(): number {
+    return this.posts().reduce((sum, post) => sum + post.likesCount, 0);
+  }
+
+  getTotalComments(): number {
+    return this.posts().reduce((sum, post) => sum + post.commentsCount, 0);
   }
 }

@@ -5,12 +5,13 @@ import { Admin } from './features/admin/admin';
 import { Feed } from './features/feed/feed';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
+import { MyPosts } from './features/my-posts/my-posts';
 
 export const routes: Routes = [
   {
     path: '',
     redirectTo: '/feed',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'login',
@@ -24,6 +25,11 @@ export const routes: Routes = [
   {
     path: 'feed',
     component: Feed,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'my-posts',
+    component: MyPosts,
     canActivate: [authGuard],
   },
   // Admin routes (require admin role)

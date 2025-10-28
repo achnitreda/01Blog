@@ -1,0 +1,298 @@
+.post-card {
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
+  }
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #edeff1;
+}
+
+.author-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  flex: 1;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.7;
+
+    .author-name {
+      text-decoration: underline;
+    }
+  }
+}
+
+.author-avatar {
+  mat-icon {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: #7c7c7c;
+  }
+
+  @media (max-width: 576px) {
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+.author-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.author-name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1a1a1b;
+}
+
+.post-time {
+  font-size: 13px;
+  color: #7c7c7c;
+}
+
+.post-menu-button {
+  color: #7c7c7c;
+
+  &:hover {
+    color: #1a1a1b;
+  }
+}
+
+// Content
+.post-content {
+  padding: 16px;
+}
+
+.post-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1b;
+  margin: 0 0 12px 0;
+  cursor: pointer;
+  line-height: 1.3;
+  transition: color 0.2s;
+
+  &:hover {
+    color: #ff4500;
+  }
+
+  @media (max-width: 576px) {
+    font-size: 18px;
+  }
+}
+
+.post-text {
+  font-size: 15px;
+  color: #1a1a1b;
+  line-height: 1.6;
+  margin: 0 0 16px 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+
+  @media (max-width: 576px) {
+    font-size: 14px;
+  }
+}
+
+// Media
+.post-media {
+  margin-top: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #f6f7f8;
+}
+
+.media-image,
+.media-video {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 600px;
+  object-fit: cover;
+
+  @media (max-width: 576px) {
+    max-height: 400px;
+  }
+}
+
+.media-video {
+  background: #000;
+}
+
+// Actions
+.post-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-top: 1px solid #edeff1;
+
+  // Remove default Material padding
+  ::ng-deep.mat-mdc-card-actions {
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  min-width: auto;
+  height: 36px;
+  border-radius: 18px;
+  color: #7c7c7c;
+  transition: all 0.2s;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  span {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+  }
+
+  @media (max-width: 576px) {
+    padding: 6px 12px;
+    height: 32px;
+
+    span {
+      font-size: 13px;
+    }
+  }
+}
+
+// Like button
+.like-btn {
+  &.liked {
+    color: #ff4500;
+
+    mat-icon {
+      animation: heartBeat 0.3s ease;
+    }
+  }
+
+  &.animating mat-icon {
+    animation: heartPulse 0.5s ease;
+  }
+
+  &:hover:not(.liked) {
+    color: #ff4500;
+  }
+}
+
+@keyframes heartBeat {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.2);
+  }
+  50% {
+    transform: scale(0.95);
+  }
+}
+
+@keyframes heartPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+// Comment button
+.comment-btn {
+  &:hover {
+    color: #0079d3;
+    background: rgba(0, 121, 211, 0.08);
+  }
+}
+
+// Edited badge
+.edited-badge {
+  font-size: 12px;
+  color: #7c7c7c;
+  font-style: italic;
+}
+
+// Menu item delete
+.delete-item {
+  color: #ea0027;
+
+  mat-icon {
+    color: #ea0027;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+  .post-card {
+    border-radius: 0;
+    margin-bottom: 8px;
+  }
+
+  .post-header {
+    padding: 12px;
+  }
+
+  .post-content {
+    padding: 12px;
+  }
+
+  .post-actions {
+    padding: 6px 8px;
+  }
+}
+
+// Loading state (if needed)
+.loading-skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

@@ -1,0 +1,78 @@
+<mat-card class="post-card">
+  <mat-card-header class="post-header">
+    <div class="author-info" (click)="goToAuthorProfile()">
+      <div class="author-avatar">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+      <div class="author-details">
+        <span class="author-name">{{ post.authorUsername }}</span>
+        <span class="post-time">{{ getRelativeTime() }}</span>
+      </div>
+    </div>
+
+    @if (isOwnPost()) {
+    <button mat-icon-button [matMenuTriggerFor]="postMenu" class="post-menu-button">
+      <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-menu #postMenu="matMenu">
+      <button mat-menu-item (click)="handleEdit()">
+        <mat-icon>edit</mat-icon>
+        <span>Edit</span>
+      </button>
+      <button mat-menu-item (click)="handleDelete()" class="delete-item">
+        <mat-icon>delete</mat-icon>
+        <span>Delete</span>
+      </button>
+    </mat-menu>
+    }
+  </mat-card-header>
+
+  <mat-card-content class="post-content">
+    <h2 class="post-title" (click)="goToPostDetail()">{{ post.title }}</h2>
+    <p class="post-text">{{ post.content }}</p>
+
+    <!-- Media -->
+    <div class="post-media">
+      @if (isImage()) {
+      <img
+        [src]="post.mediaUrl"
+        [alt]="post.title"
+        class="media-image"
+        loading="lazy"
+        (error)="$event.target.src='https://via.placeholder.com/800x600?text=Image+Not+Found'"
+      />
+      }@else if (isVideo()) {
+      <video [src]="post.mediaUrl" controls class="media-video" preload="metadata">
+        Your browser does not support the video tag.
+      </video>
+      }
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions class="post-actions">
+    <div class="action-buttons">
+      <!-- Like Button -->
+      <button
+        mat-button
+        class="action-btn like-btn"
+        [class.liked]="post.isLiked"
+        [class.animating]="isLiking()"
+        (click)="handleLike()"
+      >
+        <mat-icon> {{ post.isLiked ? 'favorite' : 'favorite_border' }} </mat-icon>
+        <span>{{ formatLikeCount() }}</span>
+      </button>
+
+      <!-- Comment Button -->
+      <button mat-button class="action-btn comment-btn" (click)="handleCommentClick()">
+        <mat-icon>comment</mat-icon>
+        <span>{{ formatCommentCount() }}</span>
+      </button>
+    </div>
+
+    <!-- Updated indicator (if edited) -->
+    @if (post.updatedAt !== post.createdAt) {
+    <span class="edited-badge">Edited</span>
+    }
+  </mat-card-actions>
+</mat-card>

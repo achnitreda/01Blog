@@ -1,0 +1,129 @@
+.feed-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 16px 80px 16px;
+  background: #dae0e6;
+  min-height: 100vh;
+  position: relative;
+}
+
+.feed-header {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  h1 {
+    margin: 0 0 8px 0;
+    color: #ff4500;
+    font-size: 28px;
+  }
+
+  p {
+    margin: 0;
+    color: #7c7c7c;
+    font-size: 15px;
+  }
+}
+
+.posts-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.loading {
+  text-align: center;
+  padding: 48px 24px;
+  color: #7c7c7c;
+}
+
+.empty-state {
+  background: white;
+  border-radius: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #a8a8a8;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    color: #1a1a1b;
+    font-size: 20px;
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    color: #7c7c7c;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ff4500 !important;
+    color: white !important;
+    padding: 0 24px;
+    height: 48px;
+    border-radius: 24px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      margin: 0;
+    }
+
+    &:hover {
+      background: #ff3600 !important;
+    }
+  }
+}
+
+// Floating Action Button
+.fab-button {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: #ff4500 !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(255, 69, 0, 0.4);
+  z-index: 1000;
+
+  &:hover {
+    background: #ff3600 !important;
+    box-shadow: 0 6px 16px rgba(255, 69, 0, 0.5);
+  }
+
+  @media (max-width: 576px) {
+    bottom: 16px;
+    right: 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  .feed-container {
+    padding: 16px 0 80px 0;
+  }
+
+  .feed-header {
+    border-radius: 0;
+    padding: 16px;
+
+    h1 {
+      font-size: 24px;
+    }
+  }
+
+  .empty-state {
+    border-radius: 0;
+    padding: 32px 16px;
+  }
+}
