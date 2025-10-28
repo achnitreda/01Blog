@@ -62,27 +62,27 @@ src/main/java/com/rachnit/
     blog01/
         ├── Blog01Application.java
         ├── entity/
-        │   ├── User.java  
+        │   ├── User.java
         |   ├── BlogPost.java
         |   ├── Subscription.java
         |   ├── Like.java
         |   ├── Comment.java
         |   ├── Notification.java
         |   ├── Report.java
-        ├── enums/         
-        │   └── Role.java                   
+        ├── enums/
+        │   └── Role.java
         ├── dto/
         │   ├── request/
-        │   │   ├── RegisterRequest.java    
-        │   │   ├── LoginRequest.java 
+        │   │   ├── RegisterRequest.java
+        │   │   ├── LoginRequest.java
         │   │   ├── CreatePostRequest.java
-        |   |   ├── UpdatePostRequest.java    
+        |   |   ├── UpdatePostRequest.java
         |   |   ├── CreateCommentRequest.java
         |   |   ├── CreateReportRequest.java
         │   └── response/
-        │   │   ├── AuthResponse.java  
-        |   |   ├── PostResponse.java 
-        |   |   ├── FollowResponse.java 
+        │   │   ├── AuthResponse.java
+        |   |   ├── PostResponse.java
+        |   |   ├── FollowResponse.java
         |   |   ├── UserProfileResponse.java
         |   |   ├── LikeResponse.java
         |   |   ├── CommentResponse.java
@@ -92,29 +92,29 @@ src/main/java/com/rachnit/
         |   |   ├── AdminUserResponse.java
         |   |   ├── AdminPostResponse.java
         |   └── error/
-        │       └── ErrorResponse.java   
+        │       └── ErrorResponse.java
         ├── repository/
         │   ├── UserRepository.java
-        |   ├── PostRepository.java   
-        |   ├── SubscriptionRepository.java       
+        |   ├── PostRepository.java
+        |   ├── SubscriptionRepository.java
         |   ├── LikeRepository.java
         |   ├── CommentRepository.java
         |   ├── NotificationRepository.java
         |   ├── ReportRepository.java
         ├── service/
-        │   ├── JwtService.java              
+        │   ├── JwtService.java
         │   ├── UserDetailsServiceImpl.java
         │   ├── AuthService.java
-        |   ├── PostService.java   
-        |   ├── SubscriptionService.java  
+        |   ├── PostService.java
+        |   ├── SubscriptionService.java
         |   ├── LikeService.java
         |   ├── CommentService.java
         |   ├── NotificationService.java
         |   ├── ReportService.java
         |   ├── AdminService.java
         ├── controller/
-        │   ├── AuthController.java 
-        |   ├── UserController.java 
+        │   ├── AuthController.java
+        |   ├── UserController.java
         |   ├── PostController.java
         |   ├── SubscriptionController.java
         |   ├── LikeController.java
@@ -123,15 +123,15 @@ src/main/java/com/rachnit/
         |   ├── ReportController.java
         |   ├── AdminController.java
         ├── config/
-        │   |── JwtProperties.java   
-        |   |── DatabaseProperties.java   
-        |   └── SecurityConfig.java   
+        │   |── JwtProperties.java
+        |   |── DatabaseProperties.java
+        |   └── SecurityConfig.java
         ├── security/
-        │   ├── JwtRequestFilter.java        
-        │   ├── JwtAuthenticationEntryPoint.java  
+        │   ├── JwtRequestFilter.java
+        │   ├── JwtAuthenticationEntryPoint.java
         |   ├── CustomAccessDeniedHandler.java
         └── exception/
-            └── GlobalExceptionHandler.java 
+            └── GlobalExceptionHandler.java
     resources/
         ├── application.properties              (base config)
         ├── application-dev.properties          (H2 - quick dev)
@@ -141,8 +141,8 @@ src/main/java/com/rachnit/
 
 ## Backend endpoints:
 ```
-POST   /api/auth/register   # register a new user
-POST   /api/auth/login      # login a user
+✅ POST   /api/auth/register   # register a new user
+✅ POST   /api/auth/login      # login a user
 ___
 GET    /api/users/{userId}/profile      # Get user profile with stats
 GET    /api/users/my-profile            # Get current user's profile
@@ -150,17 +150,17 @@ GET    /api/users/{userId}/posts        # Get specific user's posts
 POST   /api/users/{userId}/follow       # Follow a user
 DELETE /api/users/{userId}/unfollow     # Unfollow a user
 ___
-GET    /api/posts           # Get all posts (feed)
-GET    /api/posts/feed      # Personalized feed
-POST   /api/posts           # Create new post
-GET    /api/posts/{id}      # Get specific post
-PUT    /api/posts/{id}      # Update own post
-DELETE /api/posts/{id}      # Delete own post
-GET    /api/posts/my-posts  # Get current user's posts
+❔ GET    /api/posts           # Get all posts (feed)
+✅ GET    /api/posts/feed      # Personalized feed
+✅ GET    /api/posts/my-posts  # Get current user's posts
+✅ GET    /api/posts/{id}      # Get specific post
+✅ POST   /api/posts           # Create new post
+✅ PUT    /api/posts/{id}      # Update own post
+✅ DELETE /api/posts/{id}      # Delete own post
 ___
-POST    /api/posts/{postId}/like
-DELETE  /api/posts/{postId}/unlike
-GET     /api/posts/{postId}/likes
+✅ POST    /api/posts/{postId}/like
+✅ DELETE  /api/posts/{postId}/unlike
+❔ GET     /api/posts/{postId}/likes
 ____
 POST     /api/posts/{postId}/comments
 GET      /api/posts/{postId}/comments
@@ -187,7 +187,7 @@ DELETE  /api/admin/posts/{postId}           Delete post permanently
 - Report Management:
 GET     /api/admin/reports                      List all reports
 GET     /api/admin/reports/status/{status}      Filter by status
-GET     /api/admin/reports/{reportId}           Get report details 
+GET     /api/admin/reports/{reportId}           Get report details
 GET     /api/admin/reports/user/{userId}        Reports against user
 PUT     /api/admin/reports/{reportId}/resolve   Resolve report
 GET     /api/admin/reports/statistics           Report stats
@@ -203,10 +203,10 @@ New User → Register/Login → Get JWT Token
 ```
 2- Discovery Phase:
 ```
-Logged User → Find Users → Follow Them → Build Network 
+Logged User → Find Users → Follow Them → Build Network
 ```
 3- Content Phase:
-``` 
+```
 User → Create Posts → Others Like/Comment → Get Notifications
 ```
 4- Social Phase:
@@ -214,9 +214,8 @@ User → Create Posts → Others Like/Comment → Get Notifications
 User → View Feed (Posts from Followed Users) → Interact → Repeat
 ```
 5- Moderation Phase:
-``` 
+```
 Problems → Report Users → Admin Reviews → Action Taken
 ```
 
 ## my thoughts:
-

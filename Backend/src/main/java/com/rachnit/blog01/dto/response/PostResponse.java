@@ -1,8 +1,8 @@
 package com.rachnit.blog01.dto.response;
 
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.LocalDateTime;
 
 public class PostResponse {
 
@@ -16,20 +16,38 @@ public class PostResponse {
     private String authorUsername;
 
     private long likesCount;
+
+    @JsonProperty("isLiked")
     private boolean isLiked;
+
     private long commentsCount;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = "yyyy-MM-dd'T'HH:mm:ss"
+    )
     private LocalDateTime createdAt;
-    
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+
+    @JsonFormat(
+        shape = JsonFormat.Shape.STRING,
+        pattern = "yyyy-MM-dd'T'HH:mm:ss"
+    )
     private LocalDateTime updatedAt;
 
     // Constructors
     public PostResponse() {}
 
-    public PostResponse(Long id, String title, String content, String mediaUrl, String mediaType,
-                       Long authorId, String authorUsername, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public PostResponse(
+        Long id,
+        String title,
+        String content,
+        String mediaUrl,
+        String mediaType,
+        Long authorId,
+        String authorUsername,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+    ) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -41,13 +59,24 @@ public class PostResponse {
         this.updatedAt = updatedAt;
         this.likesCount = 0;
         this.isLiked = false;
-        this.commentsCount = 0; 
+        this.commentsCount = 0;
     }
 
     // Full constructor with social stats
-    public PostResponse(Long id, String title, String content, String mediaUrl, String mediaType,
-                       Long authorId, String authorUsername, long likesCount, boolean isLiked,
-                       long commentsCount, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public PostResponse(
+        Long id,
+        String title,
+        String content,
+        String mediaUrl,
+        String mediaType,
+        Long authorId,
+        String authorUsername,
+        long likesCount,
+        boolean isLiked,
+        long commentsCount,
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
+    ) {
         this.id = id;
         this.title = title;
         this.content = content;
@@ -63,39 +92,99 @@ public class PostResponse {
     }
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
-    
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-    
-    public String getMediaUrl() { return mediaUrl; }
-    public void setMediaUrl(String mediaUrl) { this.mediaUrl = mediaUrl; }
-    
-    public String getMediaType() { return mediaType; }
-    public void setMediaType(String mediaType) { this.mediaType = mediaType; }
-    
-    public Long getAuthorId() { return authorId; }
-    public void setAuthorId(Long authorId) { this.authorId = authorId; }
-    
-    public String getAuthorUsername() { return authorUsername; }
-    public void setAuthorUsername(String authorUsername) { this.authorUsername = authorUsername; }
+    public Long getId() {
+        return id;
+    }
 
-    public long getLikesCount() { return likesCount; }
-    public void setLikesCount(long likesCount) { this.likesCount = likesCount; }
-    
-    public boolean isLiked() { return isLiked; }
-    public void setLiked(boolean liked) { isLiked = liked; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public long getCommentsCount() { return commentsCount; } 
-    public void setCommentsCount(long commentsCount) { this.commentsCount = commentsCount; } 
-    
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
-    
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public String getMediaUrl() {
+        return mediaUrl;
+    }
+
+    public void setMediaUrl(String mediaUrl) {
+        this.mediaUrl = mediaUrl;
+    }
+
+    public String getMediaType() {
+        return mediaType;
+    }
+
+    public void setMediaType(String mediaType) {
+        this.mediaType = mediaType;
+    }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
+
+    public String getAuthorUsername() {
+        return authorUsername;
+    }
+
+    public void setAuthorUsername(String authorUsername) {
+        this.authorUsername = authorUsername;
+    }
+
+    public long getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(long likesCount) {
+        this.likesCount = likesCount;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
+    }
+
+    public long getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(long commentsCount) {
+        this.commentsCount = commentsCount;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }
