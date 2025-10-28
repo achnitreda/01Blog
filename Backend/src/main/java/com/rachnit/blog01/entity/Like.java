@@ -1,7 +1,5 @@
 package com.rachnit.blog01.entity;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,11 +10,19 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
-@Table(name = "likes",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "post_id"}))
+@Table(
+    name = "likes",
+    uniqueConstraints = @UniqueConstraint(
+        columnNames = { "user_id", "post_id" }
+    )
+)
 public class Like {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,17 +30,18 @@ public class Like {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private BlogPost post;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-     // Constructors
+    // Constructors
     public Like() {}
-    
+
     public Like(User user, BlogPost post) {
         this.user = user;
         this.post = post;
@@ -42,15 +49,35 @@ public class Like {
     }
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-    
-    public BlogPost getPost() { return post; }
-    public void setPost(BlogPost post) { this.post = post; }
-    
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public BlogPost getPost() {
+        return post;
+    }
+
+    public void setPost(BlogPost post) {
+        this.post = post;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
