@@ -6,7 +6,7 @@
       </div>
       <div class="author-details">
         <span class="author-name">{{ post.authorUsername }}</span>
-        <span class="post-time">{{ getRelativeTime() }}</span>
+        <span class="post-time">{{ post.createdAt | timeAgo }}</span>
       </div>
     </div>
 

@@ -1,0 +1,30 @@
+<div class="add-comment-container">
+  <form [formGroup]="commentForm" (ngSubmit)="onSubmit()">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Add a comment</mat-label>
+      <textarea
+        matInput
+        formControlName="content"
+        placeholder="Share your thoughts..."
+        rows="3"
+        [maxlength]="CONTENT_MAX"
+      ></textarea>
+
+      <!-- Character Counter -->
+      <mat-hint align="end" [class.warning]="isApproachingLimit()">
+        {{ getCharacterCount() }}
+      </mat-hint>
+
+      @if (commentForm.get('content')?.touched && commentForm.get('content')?.invalid) {
+      <mat-error>{{ getErrorMessage('content') }}</mat-error>
+      }
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-raised-button type="submit" class="submit-btn" [disabled]="isSubmitDisabled()">
+        <mat-icon>send</mat-icon>
+        <span>Post Comment</span>
+      </button>
+    </div>
+  </form>
+</div>

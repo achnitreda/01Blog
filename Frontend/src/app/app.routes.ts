@@ -6,6 +6,7 @@ import { Feed } from './features/feed/feed';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
 import { MyPosts } from './features/my-posts/my-posts';
+import { PostDetail } from './features/post-detail/post-detail';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,11 @@ export const routes: Routes = [
   {
     path: 'my-posts',
     component: MyPosts,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'posts/:id',
+    component: PostDetail,
     canActivate: [authGuard],
   },
   // Admin routes (require admin role)

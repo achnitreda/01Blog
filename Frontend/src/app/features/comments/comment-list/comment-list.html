@@ -1,0 +1,26 @@
+<div class="comment-list-container">
+  <div class="comment-list-header">
+    <div class="header-content">
+      <mat-icon>comment</mat-icon>
+      <h3>{{ getCommentCountText() }}</h3>
+    </div>
+  </div>
+
+  @if (isLoading) {
+  <div class="loading-state">
+    <p>Loading comments...</p>
+  </div>
+  } @if (!isLoading && comments.length === 0) {
+  <div class="empty-state">
+    <mat-icon>chat_bubble_outline</mat-icon>
+    <p>No comments yet</p>
+    <span>Be the first to comment!</span>
+  </div>
+  } @if (!isLoading && comments.length > 0) {
+  <div class="comment-list">
+    @for (comment of comments; track comment.id) {
+    <app-comment-card [comment]="comment" (onDelete)="handleDelete($event)"></app-comment-card>
+    }
+  </div>
+  }
+</div>

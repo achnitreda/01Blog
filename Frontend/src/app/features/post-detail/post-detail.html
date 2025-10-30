@@ -1,0 +1,50 @@
+<div class="post-detail-container">
+  <div class="back-button-container">
+    <button mat-button class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Back to Feed</span>
+    </button>
+  </div>
+
+  @if (isLoadingPost()) {
+  <div class="loading-state">
+    <p>Loading post...</p>
+  </div>
+  } @if (errorMessage() && !isLoadingPost()) {
+  <div class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <h3>Failed to Load Post</h3>
+    <p>{{ errorMessage() }}</p>
+    <button mat-raised-button class="retry-btn" (click)="retryLoadPost()">
+      <mat-icon>refresh</mat-icon>
+      <span>Try Again</span>
+    </button>
+  </div>
+  } @if (post() && !isLoadingPost()) {
+  <div class="post-detail-content">
+    <!-- Post Card -->
+    <div class="post-section">
+      <app-post-card
+        [post]="post()!"
+        (onLike)="handleLike($event)"
+        (onEdit)="handleEdit($event)"
+        (onDelete)="handleDelete($event)"
+        (onCommentClick)="handleCommentClick($event)"
+      ></app-post-card>
+    </div>
+
+    <!-- Comments Section -->
+    <div class="comments-section">
+      <!-- Add Comment Form -->
+      <app-add-comment (onComment)="handleNewComment($event)"></app-add-comment>
+
+      <!-- Comment List -->
+      <app-comment-list
+        [comments]="comments()"
+        [isLoading]="isLoadingComments()"
+        (onDelete)="handleDeleteComment($event)"
+      ></app-comment-list>
+    </div>
+  </div>
+  }
+</div>

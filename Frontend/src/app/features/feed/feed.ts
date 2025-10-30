@@ -4,11 +4,12 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { Post } from '../../shared/models';
+import { Comment, Post } from '../../shared/models';
 import { AuthService, PostService } from '../../core/services';
 import { PostCreateDialog } from '../posts/post-create-dialog/post-create-dialog';
 import { PostEditDialog } from '../posts/post-edit-dialog/post-edit-dialog';
 import { PostCard } from '../posts/post-card/post-card';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-feed',
@@ -25,6 +26,7 @@ export class Feed implements OnInit {
     private authService: AuthService,
     private postService: PostService,
     private dialog: MatDialog,
+    private router: Router,
   ) {
     this.username = this.authService.getUsername() || 'Guest';
   }
@@ -175,6 +177,6 @@ export class Feed implements OnInit {
    */
   handleCommentClick(post: Post): void {
     console.log('💬 Comment on post:', post.id);
-    // TODO: Navigate to post detail or open comment section (Phase 3)
+    this.router.navigate([`/posts/${post.id}`]);
   }
 }

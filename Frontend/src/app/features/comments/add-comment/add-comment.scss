@@ -1,0 +1,133 @@
+.add-comment-container {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+
+  @media (max-width: 576px) {
+    border-radius: 0;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.submit-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ff4500 !important;
+  color: white !important;
+  font-weight: 500;
+  padding: 0 24px;
+  height: 40px;
+  transition: all 0.2s;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #ff3600 !important;
+    box-shadow: 0 4px 8px rgba(255, 69, 0, 0.3);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 576px) {
+    padding: 0 20px;
+    height: 36px;
+    font-size: 14px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+// Character Counter Warning
+::ng-deep {
+  .mat-mdc-form-field-hint.warning {
+    color: #ea0027 !important;
+    font-weight: 500;
+  }
+}
+
+// Material Form Field Customization
+::ng-deep {
+  .add-comment-container {
+    .mat-mdc-form-field {
+      .mat-mdc-text-field-wrapper {
+        background: #f6f7f8;
+      }
+
+      &.mat-focused {
+        .mat-mdc-text-field-wrapper {
+          background: white;
+        }
+
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: #ff4500 !important;
+        }
+
+        .mat-mdc-floating-label {
+          color: #ff4500 !important;
+        }
+      }
+
+      &.mat-form-field-invalid {
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+          border-color: #ea0027 !important;
+        }
+      }
+    }
+
+    .mat-mdc-form-field-hint {
+      color: #7c7c7c;
+      font-size: 12px;
+    }
+
+    .mat-mdc-form-field-error {
+      color: #ea0027;
+      font-size: 12px;
+    }
+  }
+}
+
+// Textarea
+textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-size: 14px;
+  line-height: 1.5;
+
+  @media (max-width: 576px) {
+    font-size: 13px;
+  }
+}

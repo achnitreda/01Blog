@@ -7,10 +7,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { AuthService } from '../../../core/services';
+import { TimeAgoPipe } from '../../../shared/pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-post-card',
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatMenuModule],
+  imports: [
+    CommonModule,
+    TimeAgoPipe,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+  ],
   templateUrl: './post-card.html',
   styleUrl: './post-card.scss',
 })
@@ -57,6 +65,7 @@ export class PostCard {
   }
 
   handleCommentClick(): void {
+    this.router.navigate(['/posts', this.post.id]);
     this.onCommentClick.emit(this.post);
   }
 
@@ -66,29 +75,6 @@ export class PostCard {
 
   goToPostDetail(): void {
     this.router.navigate(['/posts', this.post.id]);
-  }
-
-  /**
-   * Get relative time (e.g., "2 hours ago")
-   */
-  getRelativeTime(): string {
-    const now = new Date();
-    const postDate = new Date(this.post.createdAt);
-    const diffMs = now.getTime() - postDate.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMins / 60);
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-
-    return postDate.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: postDate.getFullYear() !== now.getFullYear() ? 'numeric' : undefined,
-    });
   }
 
   isVideo(): boolean {

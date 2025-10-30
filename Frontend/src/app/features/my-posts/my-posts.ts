@@ -8,6 +8,7 @@ import { PostCard } from '../posts/post-card/post-card';
 import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-my-posts',
@@ -25,6 +26,7 @@ export class MyPosts implements OnInit {
     private authService: AuthService,
     private postService: PostService,
     private dialog: MatDialog,
+    private router: Router,
   ) {
     this.username = this.authService.getUsername() || 'Guest';
   }
@@ -149,7 +151,7 @@ export class MyPosts implements OnInit {
 
   handleCommentClick(post: Post): void {
     console.log('💬 Comment on post:', post.id);
-    // TODO: Navigate to post detail or open comment section
+    this.router.navigate([`/posts/${post.id}`]);
   }
 
   getTotalLikes(): number {

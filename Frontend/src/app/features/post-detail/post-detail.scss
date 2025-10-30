@@ -1,0 +1,165 @@
+.post-detail-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 16px 80px 16px;
+  background: #dae0e6;
+  min-height: 100vh;
+
+  @media (max-width: 576px) {
+    padding: 16px 0 80px 0;
+  }
+}
+
+// Back Button
+.back-button-container {
+  margin-bottom: 16px;
+
+  @media (max-width: 576px) {
+    padding: 0 12px;
+  }
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7c7c7c;
+  font-weight: 500;
+  transition: all 0.2s;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &:hover {
+    color: #ff4500;
+    background: rgba(255, 69, 0, 0.08);
+  }
+
+  @media (max-width: 576px) {
+    font-size: 14px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Loading State
+.loading-state {
+  background: white;
+  border-radius: 8px;
+  padding: 48px 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #7c7c7c;
+  }
+
+  @media (max-width: 576px) {
+    border-radius: 0;
+    padding: 32px 16px;
+  }
+}
+
+// Error State
+.error-state {
+  background: white;
+  border-radius: 8px;
+  padding: 64px 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  mat-icon {
+    font-size: 72px;
+    width: 72px;
+    height: 72px;
+    color: #ea0027;
+    margin-bottom: 24px;
+  }
+
+  h3 {
+    margin: 0 0 12px 0;
+    color: #1a1a1b;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 32px 0;
+    color: #7c7c7c;
+    font-size: 15px;
+  }
+
+  .retry-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ff4500 !important;
+    color: white !important;
+    padding: 0 24px;
+    height: 48px;
+    border-radius: 24px;
+    font-weight: 500;
+
+    &:hover {
+      background: #ff3600 !important;
+    }
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      margin: 0;
+    }
+  }
+
+  @media (max-width: 576px) {
+    border-radius: 0;
+    padding: 48px 16px;
+
+    mat-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+    }
+
+    h3 {
+      font-size: 20px;
+    }
+
+    .retry-btn {
+      height: 44px;
+      padding: 0 20px;
+    }
+  }
+}
+
+// Post Detail Content
+.post-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (max-width: 576px) {
+    gap: 12px;
+  }
+}
+
+// Comments Section
+.comments-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (max-width: 576px) {
+    gap: 12px;
+  }
+}
