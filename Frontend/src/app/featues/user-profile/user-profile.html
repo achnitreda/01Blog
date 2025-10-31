@@ -1,0 +1,127 @@
+<div class="user-profile-container">
+  <!-- Back Button -->
+  <div class="back-button-container">
+    <button mat-button class="back-btn" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Back</span>
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoadingProfile()) {
+  <div class="loading-state">
+    <p>Loading profile...</p>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (errorMessage() && !isLoadingProfile()) {
+  <div class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <h3>Failed to Load Profile</h3>
+    <p>{{ errorMessage() }}</p>
+    <button mat-raised-button class="retry-btn" (click)="loadProfile()">
+      <mat-icon>refresh</mat-icon>
+      <span>Try Again</span>
+    </button>
+  </div>
+  }
+
+  <!-- Profile Content -->
+  @if (profile() && !isLoadingProfile()) {
+  <!-- Profile Info Card -->
+  <div class="profile-info-card">
+    <div class="profile-header">
+      <div class="avatar">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+      <div class="profile-details">
+        <h2>{{ profile()!.username }}</h2>
+        <p class="joined-date">Joined {{ profile()!.joinedAt | date: 'MMM d, yyyy' }}</p>
+      </div>
+    </div>
+
+    <!-- Follow Button (only if not own profile) -->
+    @if (!profile()!.isOwnProfile) {
+    <div class="follow-section">
+      <button
+        mat-raised-button
+        class="follow-btn"
+        [class.following]="profile()!.isFollowing"
+        (click)="handleFollow()"
+        [disabled]="isFollowLoading()"
+      >
+        <mat-icon>{{ getFollowButtonIcon() }}</mat-icon>
+        <span>{{ getFollowButtonText() }}</span>
+      </button>
+    </div>
+    }
+
+    <!-- Stats -->
+    <div class="profile-stats">
+      <div class="stat-item">
+        <span class="stat-value">{{ profile()!.postsCount }}</span>
+        <span class="stat-label">Posts</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value">{{ profile()!.followersCount }}</span>
+        <span class="stat-label">Followers</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value">{{ profile()!.followingCount }}</span>
+        <span class="stat-label">Following</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Posts Section -->
+  <div class="posts-section">
+    <!-- Can see posts (following or own profile) -->
+    @if (canSeePosts()) {
+    <div class="section-header">
+      <h3>{{ profile()!.username }}'s Posts ({{ posts().length }})</h3>
+    </div>
+
+    <!-- Loading Posts -->
+    @if (isLoadingPosts()) {
+    <div class="loading-posts">
+      <p>Loading posts...</p>
+    </div>
+    }
+
+    <!-- Empty Posts -->
+    @if (!isLoadingPosts() && posts().length === 0) {
+    <div class="empty-posts">
+      <mat-icon>post_add</mat-icon>
+      <p>No posts yet</p>
+    </div>
+    }
+
+    <!-- Posts List -->
+    @if (!isLoadingPosts() && posts().length > 0) {
+    <div class="posts-list">
+      @for (post of posts(); track post.id) {
+      <app-post-card
+        [post]="post"
+        (onLike)="handleLike($event)"
+        (onEdit)="handleEdit($event)"
+        (onDelete)="handleDelete($event)"
+        (onCommentClick)="handleCommentClick($event)"
+      ></app-post-card>
+      }
+    </div>
+    } }
+
+    <!-- Cannot see posts (not following) -->
+    @if (!canSeePosts()) {
+    <div class="locked-posts">
+      <mat-icon>lock</mat-icon>
+      <h3>Posts are private</h3>
+      <p>Follow {{ profile()!.username }} to see their posts</p>
+    </div>
+    }
+  </div>
+  }
+</div>

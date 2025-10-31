@@ -4,7 +4,9 @@
       <mat-icon>account_circle</mat-icon>
     </div>
     <div class="comment-author">
-      <span class="author-username">{{ comment.authorUsername }}</span>
+      <span class="author-username" (click)="goToAuthorProfile()"
+        >{{ comment.authorUsername }}</span
+      >
       <span class="comment-time">{{ comment.createdAt | timeAgo }}</span>
     </div>
 

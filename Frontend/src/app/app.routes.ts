@@ -5,8 +5,9 @@ import { Admin } from './features/admin/admin';
 import { Feed } from './features/feed/feed';
 import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
-import { MyPosts } from './features/my-posts/my-posts';
 import { PostDetail } from './features/post-detail/post-detail';
+import { MyProfile } from './features/my-profile/my-profile';
+import { UserProfile } from './featues/user-profile/user-profile';
 
 export const routes: Routes = [
   {
@@ -29,8 +30,13 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
   {
-    path: 'my-posts',
-    component: MyPosts,
+    path: 'my-profile',
+    component: MyProfile,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'users/:userId',
+    component: UserProfile,
     canActivate: [authGuard],
   },
   {

@@ -45,7 +45,7 @@ export class PostCard {
     return currentUser?.username === this.post.authorUsername;
   }
 
-  // I don't understand is it just for liking what about disliking ??
+  // TODO: still I don't understand is it just for liking what about disliking ??
   handleLike(): void {
     if (this.isLiking()) return; // Prevent double clicks
 
@@ -70,7 +70,8 @@ export class PostCard {
   }
 
   goToAuthorProfile(): void {
-    this.router.navigate(['profile', this.post.authorUsername]);
+    console.log('goToAuthorProfile');
+    this.router.navigate(['/users', this.post.authorId]);
   }
 
   goToPostDetail(): void {

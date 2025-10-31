@@ -52,6 +52,15 @@ export class PostService {
     );
   }
 
+  getUserPosts(userId: number): Observable<Post[]> {
+    return this.http.get<Post[]>(`${environment.apiUrl}/users/${userId}/posts`).pipe(
+      tap((posts) => {
+        console.log(`✅ Fetched ${posts.length} posts for user ${userId}`);
+      }),
+      catchError(this.handleError),
+    );
+  }
+
   // ============================================
   // (CREATE | UPDATE | DELETE) POST
   // ============================================

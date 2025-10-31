@@ -1,6 +1,6 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { Post } from '../../shared/models';
-import { AuthService, PostService } from '../../core/services';
+import { Post, UserProfileModel } from '../../shared/models';
+import { AuthService, PostService, SubscriptionService } from '../../core/services';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PostCreateDialog } from '../posts/post-create-dialog/post-create-dialog';
 import { PostEditDialog } from '../posts/post-edit-dialog/post-edit-dialog';
@@ -11,20 +11,24 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-my-posts',
+  selector: 'app-my-profile',
   imports: [CommonModule, PostCard, MatDialogModule, MatButtonModule, MatIconModule],
-  templateUrl: './my-posts.html',
-  styleUrl: './my-posts.scss',
+  templateUrl: './my-profile.html',
+  styleUrl: './my-profile.scss',
 })
-export class MyPosts implements OnInit {
+export class MyProfile implements OnInit {
   username: string;
-  isLoading = signal(true);
   posts = signal<Post[]>([]);
+  profile = signal<UserProfileModel | null>(null);
+
+  isLoadingProfile = signal(true);
+  isLoadingPosts = signal(true);
   errorMessage = signal<string | null>(null);
 
   constructor(
     private authService: AuthService,
     private postService: PostService,
+    private subscriptionService: SubscriptionService,
     private dialog: MatDialog,
     private router: Router,
   ) {
@@ -32,20 +36,39 @@ export class MyPosts implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadProfile();
     this.loadMyPosts();
   }
 
+  loadProfile(): void {
+    this.isLoadingProfile.set(true);
+    this.errorMessage.set(null);
+
+    this.subscriptionService.getMyProfile().subscribe({
+      next: (profile) => {
+        this.profile.set(profile);
+        this.isLoadingProfile.set(false);
+        console.log('Profile loaded:', profile.username);
+      },
+      error: (error) => {
+        console.error('Failed to load profile:', error.message);
+        this.isLoadingProfile.set(false);
+        this.errorMessage.set(error.message || 'Failed to load profile. Please try again.');
+      },
+    });
+  }
+
   loadMyPosts(): void {
-    this.isLoading.set(true);
+    this.isLoadingPosts.set(true);
     this.errorMessage.set(null);
 
     this.postService.getMyPosts().subscribe({
       next: (posts) => {
         this.posts.set(posts);
-        this.isLoading.set(false);
+        this.isLoadingPosts.set(false);
       },
       error: (error) => {
-        this.isLoading.set(false);
+        this.isLoadingPosts.set(false);
         this.errorMessage.set(error.message || 'Failed to load your posts. Please try again.');
         this.posts.set([]);
       },
@@ -64,6 +87,7 @@ export class MyPosts implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.loadMyPosts();
+        this.loadProfile();
       }
     });
   }
@@ -141,6 +165,7 @@ export class MyPosts implements OnInit {
       next: () => {
         console.log('✅ Post deleted successfully');
         this.loadMyPosts();
+        this.loadProfile();
       },
       error: (error) => {
         console.error('❌ Failed to delete post:', error);

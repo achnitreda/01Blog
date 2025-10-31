@@ -1,0 +1,103 @@
+<div class="my-profile-container">
+  <div class="my-profile-header">
+    <div class="header-text">
+      <h1>My Profile</h1>
+      <p>Manage your profile and posts</p>
+    </div>
+  </div>
+
+  @if (isLoadingProfile()) {
+  <div class="loading-state">
+    <p>Loading profile...</p>
+  </div>
+  } @if (errorMessage() && !isLoadingProfile()) {
+  <div class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <h3>Failed to Load Profile</h3>
+    <p>{{ errorMessage() }}</p>
+    <button mat-raised-button (click)="loadProfile()">
+      <mat-icon>refresh</mat-icon>
+      <span>Try Again</span>
+    </button>
+  </div>
+  }
+
+  <!-- Profile Content -->
+  @if (profile() && !isLoadingProfile()) {
+  <!-- Profile Info Card -->
+  <div class="profile-info-card">
+    <div class="profile-header">
+      <div class="avatar">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+      <div class="profile-details">
+        <h2>{{ profile()!.username }}</h2>
+        <p class="joined-date">Joined {{ profile()!.joinedAt | date: 'MMM d, yyyy' }}</p>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="profile-stats">
+      <div class="stat-item">
+        <span class="stat-value">{{ profile()!.postsCount }}</span>
+        <span class="stat-label">Posts</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value">{{ profile()!.followersCount }}</span>
+        <span class="stat-label">Followers</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="stat-value">{{ profile()!.followingCount }}</span>
+        <span class="stat-label">Following</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Posts Section -->
+  <div class="posts-section">
+    <div class="section-header">
+      <h3>My Posts ({{ posts().length }})</h3>
+    </div>
+
+    <!-- Loading Posts -->
+    @if (isLoadingPosts()) {
+    <div class="loading-posts">
+      <p>Loading posts...</p>
+    </div>
+    }
+
+    <!-- Empty State -->
+    @if (!isLoadingPosts() && posts().length === 0) {
+    <div class="empty-posts">
+      <mat-icon>post_add</mat-icon>
+      <p>You haven't created any posts yet</p>
+      <button mat-raised-button class="create-btn" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        <span>Create Your First Post</span>
+      </button>
+    </div>
+    }
+
+    <!-- Posts List -->
+    @if (!isLoadingPosts() && posts().length > 0) {
+    <div class="posts-list">
+      @for (post of posts(); track post.id) {
+      <app-post-card
+        [post]="post"
+        (onLike)="handleLike($event)"
+        (onEdit)="handleEdit($event)"
+        (onDelete)="handleDelete($event)"
+        (onCommentClick)="handleCommentClick($event)"
+      ></app-post-card>
+      }
+    </div>
+    }
+  </div>
+  }
+
+  <button mat-fab class="fab-button" (click)="openCreateDialog()" aria-label="Create new post">
+    <mat-icon>add</mat-icon>
+  </button>
+</div>

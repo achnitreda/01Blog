@@ -4,7 +4,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
-import { Comment, Post } from '../../shared/models';
+import { Post } from '../../shared/models';
 import { AuthService, PostService } from '../../core/services';
 import { PostCreateDialog } from '../posts/post-create-dialog/post-create-dialog';
 import { PostEditDialog } from '../posts/post-edit-dialog/post-edit-dialog';
@@ -20,7 +20,9 @@ import { Router } from '@angular/router';
 export class Feed implements OnInit {
   username: string;
   posts = signal<Post[]>([]);
+
   isLoading = signal(true);
+  errorMessage = signal<string | null>(null);
 
   constructor(
     private authService: AuthService,
@@ -41,17 +43,22 @@ export class Feed implements OnInit {
    */
   loadFeed(): void {
     this.isLoading.set(true);
+    this.errorMessage.set(null);
 
     this.postService.getPersonalizedFeed().subscribe({
       next: (posts) => {
-        console.log(posts);
         this.posts.set(posts);
         this.isLoading.set(false);
         console.log(`✅ Loaded ${posts.length} posts`);
+
+        if (posts.length === 0) {
+          console.log('ℹ️ Feed is empty - user may not be following anyone');
+        }
       },
       error: (error) => {
         console.error('❌ Failed to load feed:', error);
         this.isLoading.set(false);
+        this.errorMessage.set(error.message || 'Failed to load feed. Please try again.');
         this.posts.set([]);
       },
     });
@@ -72,8 +79,6 @@ export class Feed implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log('✅ Post created:', result);
-        // Post is already added to feed by PostService
-        // Optionally refresh feed to ensure sync
         this.loadFeed();
       }
     });
@@ -139,14 +144,12 @@ export class Feed implements OnInit {
       maxHeight: '90vh',
       disableClose: false,
       autoFocus: true,
-      data: { post: post }, // ← Pass post data to dialog
+      data: { post: post },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         console.log('✅ Post updated:', result);
-        // Post is already updated in feed by PostService
-        // Optionally refresh to ensure sync
         this.loadFeed();
       }
     });
@@ -172,11 +175,15 @@ export class Feed implements OnInit {
     }
   }
 
-  /**
-   * Handle comment click
-   */
   handleCommentClick(post: Post): void {
-    console.log('💬 Comment on post:', post.id);
-    this.router.navigate([`/posts/${post.id}`]);
+    this.router.navigate(['/posts', post.id]);
+  }
+
+  goToMyProfile(): void {
+    this.router.navigate(['/my-profile']);
+  }
+
+  isEmpty(): boolean {
+    return !this.isLoading() && this.posts().length === 0;
   }
 }

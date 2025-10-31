@@ -1,26 +1,57 @@
 <div class="feed-container">
+  <!-- Header -->
   <div class="feed-header">
-    <h1>Your Feed</h1>
-    <p>Welcome, <strong>{{ username }}</strong>!</p>
+    <div class="header-text">
+      <h1>Your Feed</h1>
+      <p>Posts from people you follow</p>
+    </div>
   </div>
 
-  <!-- Post Cards -->
-  <div class="posts-list">
-    @if (isLoading()) {
-    <div class="loading">
-      <p>Loading posts...</p>
-    </div>
-    } @else if (posts().length === 0) {
-    <div class="empty-state">
-      <mat-icon>post_add</mat-icon>
-      <h3>No posts yet</h3>
-      <p>Be the first to share something!</p>
-      <button mat-raised-button class="btn-primary" (click)="openCreateDialog()">
-        <mat-icon>add</mat-icon>
-        <span>Create Post</span>
+  <!-- Loading State -->
+  @if (isLoading()) {
+  <div class="loading-state">
+    <mat-icon class="loading-icon">refresh</mat-icon>
+    <p>Loading your feed...</p>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (errorMessage() && !isLoading()) {
+  <div class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <h3>Failed to Load Feed</h3>
+    <p>{{ errorMessage() }}</p>
+    <button mat-raised-button class="retry-btn" (click)="loadFeed()">
+      <mat-icon>refresh</mat-icon>
+      <span>Try Again</span>
+    </button>
+  </div>
+  }
+
+  <!-- Empty State (Not following anyone) -->
+  @if (isEmpty() && !errorMessage()) {
+  <div class="empty-state">
+    <mat-icon class="empty-icon">group</mat-icon>
+    <h3>Your feed is empty</h3>
+    <p>Start following users to see their posts here!</p>
+
+    <div class="empty-actions">
+      <p class="suggestion">
+        💡 <strong>Tip:</strong> Click on any username to visit their profile and follow them
+      </p>
+
+      <button mat-raised-button class="profile-btn" (click)="goToMyProfile()">
+        <mat-icon>account_circle</mat-icon>
+        <span>Go to My Profile</span>
       </button>
     </div>
-    } @else { @for (post of posts(); track post.id) {
+  </div>
+  }
+
+  <!-- Posts Feed -->
+  @if (!isLoading() && !isEmpty() && !errorMessage()) {
+  <div class="posts-feed">
+    @for (post of posts(); track post.id) {
     <app-post-card
       [post]="post"
       (onLike)="handleLike($event)"
@@ -28,10 +59,11 @@
       (onDelete)="handleDelete($event)"
       (onCommentClick)="handleCommentClick($event)"
     ></app-post-card>
-    } }
+    }
   </div>
+  }
 
-  <!-- Floating Action Button (FAB) -->
+  <!-- Floating Action Button -->
   <button mat-fab class="fab-button" (click)="openCreateDialog()" aria-label="Create new post">
     <mat-icon>add</mat-icon>
   </button>

@@ -36,9 +36,9 @@ import { AuthService } from '../../../core/services';
             <mat-icon>home</mat-icon>
             <span>Feed</span>
           </a>
-          <a mat-button routerLink="/my-posts" routerLinkActive="active">
-            <mat-icon>article</mat-icon>
-            <span>My Posts</span>
+          <a mat-button routerLink="/my-profile" routerLinkActive="active">
+            <mat-icon>account_circle</mat-icon>
+            <span>My Profile</span>
           </a>
         </nav>
 
@@ -49,9 +49,9 @@ import { AuthService } from '../../../core/services';
             <mat-icon>arrow_drop_down</mat-icon>
           </button>
           <mat-menu #menu="matMenu">
-            <button mat-menu-item routerLink="/my-posts">
-              <mat-icon>article</mat-icon>
-              <span>My Posts</span>
+            <button mat-menu-item routerLink="/my-profile">
+              <mat-icon>account_circle</mat-icon>
+              <span>My Profile</span>
             </button>
             <button mat-menu-item (click)="onLogout()">
               <mat-icon>logout</mat-icon>
