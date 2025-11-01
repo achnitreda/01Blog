@@ -36,6 +36,12 @@ import { AuthService } from '../../../core/services';
             <mat-icon>home</mat-icon>
             <span>Feed</span>
           </a>
+
+          <a mat-button routerLink="/discover" routerLinkActive="active">
+            <mat-icon>explore</mat-icon>
+            <span>Discover</span>
+          </a>
+
           <a mat-button routerLink="/my-profile" routerLinkActive="active">
             <mat-icon>account_circle</mat-icon>
             <span>My Profile</span>

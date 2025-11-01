@@ -40,10 +40,17 @@
         💡 <strong>Tip:</strong> Click on any username to visit their profile and follow them
       </p>
 
-      <button mat-raised-button class="profile-btn" (click)="goToMyProfile()">
-        <mat-icon>account_circle</mat-icon>
-        <span>Go to My Profile</span>
-      </button>
+      <div class="action-buttons">
+        <button mat-raised-button class="discover-btn" routerLink="/discover">
+          <mat-icon>explore</mat-icon>
+          <span>Discover Users</span>
+        </button>
+
+        <button mat-button class="profile-btn" (click)="goToMyProfile()">
+          <mat-icon>account_circle</mat-icon>
+          <span>My Profile</span>
+        </button>
+      </div>
     </div>
   </div>
   }

@@ -1,0 +1,401 @@
+.discover-container {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 16px 80px 16px;
+  background: #dae0e6;
+  min-height: 100vh;
+
+  @media (max-width: 576px) {
+    padding: 16px 0 80px 0;
+  }
+}
+
+// Header
+.discover-header {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  @media (max-width: 576px) {
+    border-radius: 0;
+    padding: 16px;
+  }
+
+  .header-text {
+    h1 {
+      margin: 0 0 8px 0;
+      color: #ff4500;
+      font-size: 28px;
+      font-weight: 600;
+
+      @media (max-width: 576px) {
+        font-size: 24px;
+      }
+    }
+
+    p {
+      margin: 0;
+      color: #7c7c7c;
+      font-size: 15px;
+
+      @media (max-width: 576px) {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Search Section
+.search-section {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  @media (max-width: 576px) {
+    border-radius: 0;
+    padding: 12px;
+  }
+
+  .search-field {
+    width: 100%;
+    margin: 0;
+
+    ::ng-deep {
+      .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+  }
+}
+
+// Loading State
+.loading-state {
+  background: white;
+  border-radius: 8px;
+  padding: 64px 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  .loading-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ff4500;
+    margin-bottom: 16px;
+    animation: spin 1s linear infinite;
+  }
+
+  p {
+    margin: 0;
+    color: #7c7c7c;
+    font-size: 15px;
+  }
+
+  @media (max-width: 576px) {
+    border-radius: 0;
+    padding: 48px 16px;
+
+    .loading-icon {
+      font-size: 56px;
+      width: 56px;
+      height: 56px;
+    }
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Error State
+.error-state {
+  background: white;
+  border-radius: 8px;
+  padding: 64px 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  mat-icon {
+    font-size: 72px;
+    width: 72px;
+    height: 72px;
+    color: #ea0027;
+    margin-bottom: 24px;
+  }
+
+  h3 {
+    margin: 0 0 12px 0;
+    color: #1a1a1b;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 32px 0;
+    color: #7c7c7c;
+    font-size: 15px;
+  }
+
+  .retry-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #ff4500 !important;
+    color: white !important;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      margin: 0;
+    }
+  }
+
+  @media (max-width: 576px) {
+    border-radius: 0;
+    padding: 48px 16px;
+
+    mat-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+    }
+
+    h3 {
+      font-size: 20px;
+    }
+  }
+}
+
+// Empty States
+.empty-search,
+.empty-users {
+  background: white;
+  border-radius: 8px;
+  padding: 64px 24px;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  mat-icon {
+    font-size: 72px;
+    width: 72px;
+    height: 72px;
+    color: #d0d0d0;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    color: #1a1a1b;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0 0 24px 0;
+    color: #7c7c7c;
+    font-size: 15px;
+  }
+
+  button {
+    color: #ff4500;
+  }
+
+  @media (max-width: 576px) {
+    border-radius: 0;
+    padding: 48px 16px;
+
+    mat-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+    }
+  }
+}
+
+// Users List
+.users-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// User Card
+.user-card {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  @media (max-width: 576px) {
+    border-radius: 0;
+    padding: 12px;
+    gap: 12px;
+  }
+}
+
+// User Info (clickable area)
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+  padding: 4px;
+  margin: -4px;
+  border-radius: 4px;
+  transition: background 0.2s;
+
+  &:hover {
+    background: #f6f7f8;
+  }
+
+  @media (max-width: 576px) {
+    gap: 10px;
+  }
+}
+
+.user-avatar {
+  flex-shrink: 0;
+
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #7c7c7c;
+
+    @media (max-width: 576px) {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+.user-details {
+  flex: 1;
+  min-width: 0;
+
+  .username {
+    margin: 0 0 4px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1b;
+    transition: color 0.2s;
+
+    .user-info:hover & {
+      color: #ff4500;
+    }
+
+    @media (max-width: 576px) {
+      font-size: 15px;
+    }
+  }
+
+  .user-stats {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: #7c7c7c;
+    flex-wrap: wrap;
+
+    .stat {
+      strong {
+        color: #1a1a1b;
+        font-weight: 600;
+      }
+    }
+
+    .stat-divider {
+      color: #d0d0d0;
+    }
+
+    @media (max-width: 576px) {
+      font-size: 12px;
+    }
+  }
+
+  .joined-date {
+    margin: 0;
+    font-size: 12px;
+    color: #7c7c7c;
+
+    @media (max-width: 576px) {
+      font-size: 11px;
+    }
+  }
+}
+
+// Follow Button
+.follow-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ff4500 !important;
+  color: white !important;
+  padding: 0 20px;
+  height: 36px;
+  border-radius: 18px;
+  font-weight: 500;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all 0.2s;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background: #ff3600 !important;
+    box-shadow: 0 2px 8px rgba(255, 69, 0, 0.4);
+  }
+
+  &.following {
+    background: white !important;
+    color: #ff4500 !important;
+    border: 2px solid #ff4500;
+
+    &:hover:not(:disabled) {
+      background: #fff4f0 !important;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 576px) {
+    height: 32px;
+    padding: 0 16px;
+    font-size: 13px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}

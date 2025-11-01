@@ -9,11 +9,11 @@ import { AuthService, PostService } from '../../core/services';
 import { PostCreateDialog } from '../posts/post-create-dialog/post-create-dialog';
 import { PostEditDialog } from '../posts/post-edit-dialog/post-edit-dialog';
 import { PostCard } from '../posts/post-card/post-card';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-feed',
-  imports: [CommonModule, PostCard, MatDialogModule, MatButtonModule, MatIconModule],
+  imports: [CommonModule, RouterLink, PostCard, MatDialogModule, MatButtonModule, MatIconModule],
   templateUrl: './feed.html',
   styleUrl: './feed.scss',
 })

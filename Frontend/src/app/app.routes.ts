@@ -8,6 +8,7 @@ import { Register } from './features/auth/register/register';
 import { PostDetail } from './features/post-detail/post-detail';
 import { MyProfile } from './features/my-profile/my-profile';
 import { UserProfile } from './featues/user-profile/user-profile';
+import { DiscoverUsers } from './features/discover-users/discover-users';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,11 @@ export const routes: Routes = [
   {
     path: 'feed',
     component: Feed,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'discover',
+    component: DiscoverUsers,
     canActivate: [authGuard],
   },
   {

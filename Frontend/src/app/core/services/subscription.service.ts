@@ -39,14 +39,15 @@ export class SubscriptionService {
     );
   }
 
-  getUserProfileByUsername(username: string): Observable<UserProfileModel> {
-    console.log(`📥 Fetching profile for username: @${username}...`);
+  getAllUsers(): Observable<UserProfileModel[]> {
+    console.log('📥 Fetching all users for discovery...');
 
-    // TODO: Backend needs a /api/users/username/{username}/profile endpoint
-    // For now, you'll need to get userId first or add this endpoint to backend
-    // Placeholder - will implement based on your backend
-
-    return throwError(() => new Error('Not implemented: Use getUserProfile(userId) instead'));
+    return this.http.get<UserProfileModel[]>(`${this.apiUrl}`).pipe(
+      tap((users) => {
+        console.log(`✅ Loaded ${users.length} users`);
+      }),
+      catchError(this.handleError),
+    );
   }
 
   getMyProfile(): Observable<UserProfileModel> {

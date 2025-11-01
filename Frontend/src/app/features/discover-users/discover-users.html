@@ -1,0 +1,113 @@
+<div class="discover-container">
+  <div class="discover-header">
+    <div class="header-text">
+      <h1>Discover Users</h1>
+      <p>Find people to follow</p>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-section">
+    <mat-form-field class="search-field" appearance="outline">
+      <mat-icon matPrefix>search</mat-icon>
+      <mat-label>Search users</mat-label>
+      <input
+        matInput
+        type="text"
+        placeholder="Search by username..."
+        [ngModel]="searchQuery()"
+        (ngModelChange)="onSearchChange($event)"
+      />
+      @if (searchQuery()) {
+      <button matSuffix mat-icon-button (click)="onSearchChange('')" aria-label="Clear search">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+  <div class="loading-state">
+    <mat-icon class="loading-icon">refresh</mat-icon>
+    <p>Loading users...</p>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (errorMessage() && !isLoading()) {
+  <div class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <h3>Failed to Load Users</h3>
+    <p>{{ errorMessage() }}</p>
+    <button mat-raised-button class="retry-btn" (click)="loadUsers()">
+      <mat-icon>refresh</mat-icon>
+      <span>Try Again</span>
+    </button>
+  </div>
+  }
+
+  <!-- Empty Search Results -->
+  @if (!isLoading() && !errorMessage() && searchQuery() && filteredUsers().length === 0) {
+  <div class="empty-search">
+    <mat-icon>search_off</mat-icon>
+    <h3>No users found</h3>
+    <p>No users match "{{ searchQuery() }}"</p>
+    <button mat-button (click)="onSearchChange('')">
+      <mat-icon>clear</mat-icon>
+      <span>Clear Search</span>
+    </button>
+  </div>
+  }
+
+  <!-- No Users Available -->
+  @if (!isLoading() && !errorMessage() && !searchQuery() && filteredUsers().length === 0) {
+  <div class="empty-users">
+    <mat-icon>group</mat-icon>
+    <h3>No other users yet</h3>
+    <p>Be the first to create content!</p>
+  </div>
+  }
+
+  <!-- Users List -->
+  @if (!isLoading() && !errorMessage() && filteredUsers().length > 0) {
+  <div class="users-list">
+    @for (user of filteredUsers(); track user.userId) {
+    <div class="user-card">
+      <!-- User Info (clickable) -->
+      <div class="user-info" (click)="goToProfile(user)">
+        <div class="user-avatar">
+          <mat-icon>account_circle</mat-icon>
+        </div>
+
+        <div class="user-details">
+          <h3 class="username">{{ user.username }}</h3>
+
+          <div class="user-stats">
+            <span class="stat"> <strong>{{ user.postsCount }}</strong> Posts </span>
+            <span class="stat-divider">·</span>
+            <span class="stat"> <strong>{{ user.followersCount }}</strong> Followers </span>
+            <span class="stat-divider">·</span>
+            <span class="stat"> <strong>{{ user.followingCount }}</strong> Following </span>
+          </div>
+
+          <p class="joined-date">Joined {{ user.joinedAt | date: 'MMM d, yyyy' }}</p>
+        </div>
+      </div>
+
+      <!-- Follow Button -->
+      <button
+        mat-raised-button
+        class="follow-btn"
+        [class.following]="user.isFollowing"
+        [disabled]="isFollowInProgress(user.userId)"
+        (click)="handleFollowToggle(user)"
+      >
+        <mat-icon>{{ getFollowButtonIcon(user) }}</mat-icon>
+        <span>{{ getFollowButtonText(user) }}</span>
+      </button>
+    </div>
+    }
+  </div>
+  }
+</div>
