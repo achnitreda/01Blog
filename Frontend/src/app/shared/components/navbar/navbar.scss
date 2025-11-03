@@ -1,0 +1,290 @@
+.navbar {
+  background: white !important;
+  color: #1a1a1b !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 0 !important;
+  height: 64px;
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 100%;
+
+  @media (max-width: 768px) {
+    padding: 0 16px;
+  }
+
+  @media (max-width: 576px) {
+    padding: 0 12px;
+  }
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+
+  .brand-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+    color: #ff4500;
+  }
+
+  .brand-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #ff4500;
+
+    @media (max-width: 576px) {
+      font-size: 18px;
+    }
+  }
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+
+  a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #1a1a1b;
+    font-weight: 500;
+    transition: all 0.2s;
+    border-radius: 4px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    &:hover {
+      background: rgba(255, 69, 0, 0.08);
+      color: #ff4500;
+    }
+
+    &.active {
+      color: #ff4500;
+      background: rgba(255, 69, 0, 0.08);
+    }
+  }
+
+  @media (max-width: 768px) {
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      padding: 0 18px;
+    }
+
+    gap: 4px;
+
+    span {
+      display: none; // Hide text on mobile, show only icons
+    }
+  }
+
+  @media (max-width: 576px) {
+    gap: 2px;
+  }
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notification-wrapper {
+  position: relative;
+}
+
+.notification-btn {
+  color: #1a1a1b;
+  transition: all 0.2s;
+  position: relative;
+
+  &:hover {
+    background: rgba(255, 69, 0, 0.08);
+    color: #ff4500;
+  }
+
+  // Badge styling (Material badge)
+  ::ng-deep {
+    .mat-badge-content {
+      background: #ff4500 !important;
+      color: white !important;
+      font-size: 10px !important;
+      font-weight: 700 !important;
+      min-width: 18px !important;
+      height: 18px !important;
+      margin: -14px !important;
+      line-height: 18px !important;
+      border-radius: 9px !important;
+      padding: 0 5px !important;
+      box-shadow: 0 2px 4px rgba(255, 69, 0, 0.3) !important;
+      animation: badgePulse 2s ease-in-out infinite;
+    }
+
+    // Remove badge when count is 0
+    .mat-badge-hidden .mat-badge-content {
+      display: none !important;
+    }
+  }
+}
+
+@keyframes badgePulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.notification-dropdown-container {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 1100;
+  animation: slideDown 0.2s ease-out;
+
+  @media (max-width: 576px) {
+    right: -12px;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #1a1a1b;
+  padding: 0 12px;
+  height: 40px;
+  border-radius: 20px;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba(255, 69, 0, 0.08);
+    color: #ff4500;
+  }
+
+  mat-icon:first-child {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+
+  .username {
+    font-weight: 500;
+    font-size: 14px;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+
+  .dropdown-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+::ng-deep .mat-mdc-menu-panel {
+  min-width: 200px;
+}
+
+::ng-deep .mat-mdc-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #7c7c7c;
+  }
+
+  &:hover mat-icon {
+    color: #ff4500;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar {
+    height: 56px;
+  }
+
+  .navbar-brand {
+    .brand-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .nav-links a {
+    min-width: 40px;
+    justify-content: center;
+    padding: 0 8px;
+  }
+
+  .user-menu-btn {
+    padding: 0 8px;
+
+    mat-icon:first-child {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    .dropdown-icon {
+      display: none;
+    }
+  }
+}

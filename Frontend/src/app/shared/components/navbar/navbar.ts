@@ -1,12 +1,13 @@
-import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { Component, HostListener, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-
-import { AuthService } from '../../../core/services';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService, NotificationService } from '../../../core/services';
+import { MatBadgeModule } from '@angular/material/badge';
+import { NotificationDropdown } from '../notification-dropdown/notification-dropdown';
 
 @Component({
   selector: 'app-navbar',
@@ -18,187 +19,73 @@ import { AuthService } from '../../../core/services';
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
+    MatBadgeModule,
+    NotificationDropdown,
   ],
-  template: `
-    <mat-toolbar class="navbar">
-      <div class="navbar-content">
-        <div class="brand" routerLink="/feed">
-          <h1>01Blog</h1>
-        </div>
-
-        <nav class="nav-links">
-          <a
-            mat-button
-            routerLink="/feed"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: false }"
-          >
-            <mat-icon>home</mat-icon>
-            <span>Feed</span>
-          </a>
-
-          <a mat-button routerLink="/discover" routerLinkActive="active">
-            <mat-icon>explore</mat-icon>
-            <span>Discover</span>
-          </a>
-
-          <a mat-button routerLink="/my-profile" routerLinkActive="active">
-            <mat-icon>account_circle</mat-icon>
-            <span>My Profile</span>
-          </a>
-        </nav>
-
-        <div class="user-menu">
-          <button mat-button [matMenuTriggerFor]="menu" class="user-btn">
-            <mat-icon>account_circle</mat-icon>
-            <span>{{ username() }}</span>
-            <mat-icon>arrow_drop_down</mat-icon>
-          </button>
-          <mat-menu #menu="matMenu">
-            <button mat-menu-item routerLink="/my-profile">
-              <mat-icon>account_circle</mat-icon>
-              <span>My Profile</span>
-            </button>
-            <button mat-menu-item (click)="onLogout()">
-              <mat-icon>logout</mat-icon>
-              <span>Logout</span>
-            </button>
-          </mat-menu>
-        </div>
-      </div>
-    </mat-toolbar>
-  `,
-  styles: [
-    `
-      .navbar {
-        background: white !important;
-        color: #1a1a1b !important;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        height: 64px;
-        padding: 0;
-      }
-
-      .navbar-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 0 16px;
-        height: 100%;
-      }
-
-      .brand {
-        cursor: pointer;
-
-        h1 {
-          margin: 0;
-          font-size: 24px;
-          font-weight: 700;
-          color: #ff4500;
-          letter-spacing: -0.5px;
-        }
-      }
-
-      .nav-links {
-        display: flex;
-        gap: 8px;
-        flex: 1;
-        justify-content: center;
-
-        @media (max-width: 576px) {
-          display: none;
-        }
-
-        a {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: #7c7c7c;
-          font-weight: 500;
-          transition: all 0.2s;
-
-          mat-icon {
-            font-size: 20px;
-            width: 20px;
-            height: 20px;
-          }
-
-          &:hover {
-            color: #1a1a1b;
-            background: rgba(0, 0, 0, 0.04);
-            text-decoration: none;
-          }
-
-          &.active {
-            color: #ff4500;
-            background: rgba(255, 69, 0, 0.08);
-          }
-        }
-      }
-
-      .user-menu {
-        .user-btn {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          color: #7c7c7c;
-
-          mat-icon {
-            font-size: 20px;
-            width: 20px;
-            height: 20px;
-          }
-
-          span {
-            font-weight: 500;
-
-            @media (max-width: 576px) {
-              display: none;
-            }
-          }
-
-          &:hover {
-            color: #1a1a1b;
-            background: rgba(0, 0, 0, 0.04);
-          }
-        }
-      }
-
-      // Mobile adjustments
-      @media (max-width: 576px) {
-        .navbar {
-          height: 56px;
-        }
-
-        .brand h1 {
-          font-size: 20px;
-        }
-
-        .navbar-content {
-          padding: 0 8px;
-        }
-      }
-    `,
-  ],
+  templateUrl: './navbar.html',
+  styleUrl: './navbar.scss',
 })
 export class Navbar {
-  username = signal<string>('');
+  username: string | null = null;
+
+  // Notification state
+  unreadCount = signal(0);
+  showNotificationDropdown = signal(false);
 
   constructor(
     private authService: AuthService,
+    private notificationService: NotificationService,
     private router: Router,
   ) {
-    this.username.set(this.authService.getUsername() || 'Guest');
+    this.username = this.authService.getUsername();
+    this.loadNotificationCount();
+  }
+
+  loadNotificationCount(): void {
+    this.notificationService.getSummary().subscribe({
+      next: (summary) => {
+        this.unreadCount.set(summary.unreadCount);
+        console.log(`🔔 Notification badge count: ${summary.unreadCount}`);
+      },
+      error: (error) => {
+        console.error('❌ Failed to load notification count:', error.message);
+      },
+    });
+  }
+
+  toggleNotificationDropdown(): void {
+    this.showNotificationDropdown.update((show) => !show);
+  }
+
+  closeNotificationDropdown(): void {
+    this.showNotificationDropdown.set(false);
+  }
+
+  handleNotificationCountUpdate(count: number): void {
+    this.unreadCount.set(count);
+  }
+
+  handleNotificationClick(): void {
+    this.closeNotificationDropdown();
+  }
+
+  /**
+   * Close dropdown when clicking outside
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    const clickedInside = target.closest('.notification-wrapper');
+
+    if (!clickedInside && this.showNotificationDropdown()) {
+      this.closeNotificationDropdown();
+    }
   }
 
   onLogout(): void {
-    console.log('🚪 Logging out...');
     this.authService.logout();
+    this.username = null;
+    this.unreadCount.set(0);
     this.router.navigate(['/login']);
   }
 }

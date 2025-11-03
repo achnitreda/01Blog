@@ -1,0 +1,90 @@
+<div class="notification-dropdown">
+  <!-- Header -->
+  <div class="dropdown-header">
+    <h3>Unread Notifications</h3>
+    @if (notifications().length > 0) {
+    <span class="count-badge"> {{ notifications().length }} </span>
+    }
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading()) {
+  <div class="loading-state">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading notifications...</p>
+  </div>
+  }
+
+  <!-- Error State -->
+  @if (errorMessage() && !isLoading()) {
+  <div class="error-state">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ errorMessage() }}</p>
+    <button mat-button class="retry-btn" (click)="retry()">
+      <mat-icon>refresh</mat-icon>
+      <span>Retry</span>
+    </button>
+  </div>
+  }
+
+  <!-- Notifications List -->
+  @if (!isLoading() && !errorMessage()) { @if (hasNotifications()) {
+  <div class="notifications-list">
+    @for (notification of notifications(); track notification.id) {
+    <div class="notification-item" (click)="handleNotificationClick(notification)">
+      <!-- Unread Indicator -->
+      <div class="unread-indicator">
+        <div class="blue-dot"></div>
+      </div>
+
+      <!-- Notification Icon -->
+      <div class="notification-icon" [style.color]="getNotificationColor(notification)">
+        <mat-icon>{{ getNotificationIcon(notification) }}</mat-icon>
+      </div>
+
+      <!-- Notification Content -->
+      <div class="notification-content">
+        <p class="notification-message">
+          <span class="actor-username" (click)="navigateToProfile(notification, $event)">
+            {{ notification.actorUsername }}
+          </span>
+          published a post
+        </p>
+
+        @if (notification.postTitle) {
+        <p class="post-title">"{{ notification.postTitle }}"</p>
+        }
+
+        <p class="notification-time">{{ notification.createdAt | timeAgo }}</p>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- Mark All as Read Button -->
+  <div class="dropdown-footer">
+    <button
+      mat-button
+      class="mark-all-btn"
+      (click)="markAllAsRead()"
+      [disabled]="isMarkingAllAsRead()"
+    >
+      @if (isMarkingAllAsRead()) {
+      <mat-spinner diameter="16"></mat-spinner>
+      } @else {
+      <mat-icon>done_all</mat-icon>
+      }
+      <span>Mark All as Read</span>
+    </button>
+  </div>
+  }
+
+  <!-- Empty State -->
+  @if (!hasNotifications()) {
+  <div class="empty-state">
+    <mat-icon>notifications_none</mat-icon>
+    <h4>No unread notifications</h4>
+    <p>You're all caught up!</p>
+  </div>
+  } }
+</div>

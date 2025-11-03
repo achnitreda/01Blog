@@ -8,3 +8,6 @@ export * from './comment.model';
 
 export * from './user-profile.model';
 export * from './follow.model';
+
+export * from './notification.model';
+export * from './notification-summary.model';

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UserProfile } from './user-profile';
+import { NotificationDropdown } from './notification-dropdown';
 
-describe('UserProfile', () => {
-  let component: UserProfile;
-  let fixture: ComponentFixture<UserProfile>;
+describe('NotificationDropdown', () => {
+  let component: NotificationDropdown;
+  let fixture: ComponentFixture<NotificationDropdown>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UserProfile]
+      imports: [NotificationDropdown]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(UserProfile);
+    fixture = TestBed.createComponent(NotificationDropdown);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

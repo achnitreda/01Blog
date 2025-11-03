@@ -7,8 +7,8 @@ import { Login } from './features/auth/login/login';
 import { Register } from './features/auth/register/register';
 import { PostDetail } from './features/post-detail/post-detail';
 import { MyProfile } from './features/my-profile/my-profile';
-import { UserProfile } from './featues/user-profile/user-profile';
 import { DiscoverUsers } from './features/discover-users/discover-users';
+import { UserProfile } from './features/user-profile/user-profile';
 
 export const routes: Routes = [
   {
