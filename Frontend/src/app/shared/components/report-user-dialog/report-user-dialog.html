@@ -1,0 +1,126 @@
+<div class="report-dialog">
+  <!-- Report Form -->
+  @if (!showConfirmation()) {
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <div class="header-icon">
+        <mat-icon>warning</mat-icon>
+      </div>
+      <h2 mat-dialog-title>Report User</h2>
+    </div>
+    <mat-dialog-content>
+      <div class="report-info">
+        <p class="reporting-user">You are reporting: <strong>&#64;{{ data.username }}</strong></p>
+        <p class="instruction">
+          Please explain why you're reporting this user. Be specific and provide details about the
+          inappropriate behavior.
+        </p>
+      </div>
+
+      <mat-form-field class="reason-field" appearance="outline">
+        <mat-label>Reason for report</mat-label>
+        <textarea
+          matInput
+          [value]="reason()"
+          (input)="onReasonChange($any($event.target).value)"
+          placeholder="Example: This user is posting spam content repeatedly..."
+          rows="6"
+          maxlength="500"
+          cdkFocusInitial
+        ></textarea>
+        <mat-hint align="start">
+          @if (getValidationError()) {
+          <span class="error-hint">{{ getValidationError() }}</span>
+          } @else {
+          <span>Minimum {{ MIN_LENGTH }} characters required</span>
+          }
+        </mat-hint>
+        <mat-hint align="end">
+          <span [style.color]="getCounterColor()">
+            {{ getCharacterCount() }} / {{ MAX_LENGTH }}
+          </span>
+        </mat-hint>
+      </mat-form-field>
+
+      @if (errorMessage()) {
+      <div class="error-message">
+        <mat-icon>error</mat-icon>
+        <span>{{ errorMessage() }}</span>
+      </div>
+      }
+
+      <div class="warning-message">
+        <mat-icon>info</mat-icon>
+        <p>
+          <strong>Important:</strong> False reports may result in action against your account. Only
+          submit reports for genuine violations.
+        </p>
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="onCancel()" [disabled]="isSubmitting()">Cancel</button>
+      <button
+        mat-raised-button
+        class="submit-btn"
+        (click)="onSubmit()"
+        [disabled]="isSubmitDisabled()"
+      >
+        <mat-icon>flag</mat-icon>
+        <span>Submit Report</span>
+      </button>
+    </mat-dialog-actions>
+  </div>
+  } @if (showConfirmation()) {
+  <div class="dialog-content confirmation">
+    <div class="dialog-header">
+      <div class="header-icon warning">
+        <mat-icon>warning</mat-icon>
+      </div>
+      <h2 mat-dialog-title>Confirm Report</h2>
+    </div>
+
+    <mat-dialog-content>
+      <div class="confirmation-content">
+        <p class="confirm-question">
+          Are you sure you want to report <strong>&#64;{{ data.username }}</strong>?
+        </p>
+
+        <div class="reason-preview">
+          <p class="preview-label">Your reason:</p>
+          <div class="preview-text">"{{ reason() }}"</div>
+        </div>
+
+        <p class="warning-text">
+          <mat-icon>info</mat-icon>
+          This action cannot be undone. Our moderation team will review this report.
+        </p>
+
+        @if (errorMessage()) {
+        <div class="error-message">
+          <mat-icon>error</mat-icon>
+          <span>{{ errorMessage() }}</span>
+        </div>
+        }
+      </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+      <button mat-button (click)="cancelConfirmation()" [disabled]="isSubmitting()">Go Back</button>
+      <button
+        mat-raised-button
+        class="confirm-btn"
+        (click)="confirmSubmit()"
+        [disabled]="isSubmitting()"
+      >
+        @if (isSubmitting()) {
+        <mat-spinner diameter="20"></mat-spinner>
+        } @else {
+        <mat-icon>check</mat-icon>
+        }
+        <span>{{ isSubmitting() ? 'Submitting...' : 'Yes, Report' }}</span>
+      </button>
+    </mat-dialog-actions>
+  </div>
+  }
+</div>

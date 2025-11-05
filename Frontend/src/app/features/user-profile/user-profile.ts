@@ -8,10 +8,13 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { PostCard } from '../../features/posts/post-card/post-card';
+import { MatMenuModule } from '@angular/material/menu';
+import { ReportUserDialog } from '../../shared/components/report-user-dialog/report-user-dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-user-profile',
-  imports: [CommonModule, MatButtonModule, MatIconModule, PostCard],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatMenuModule, PostCard],
   templateUrl: './user-profile.html',
   styleUrl: './user-profile.scss',
 })
@@ -86,6 +89,28 @@ export class UserProfile implements OnInit {
         console.error('Failed to load user posts:', error);
         this.isLoadingPosts.set(false);
       },
+    });
+  }
+
+  openReportDialog(): void {
+    const currentProfile = this.profile();
+    if (!currentProfile) return;
+
+    const dialogRef = this.dialog.open(ReportUserDialog, {
+      width: '600px',
+      maxWidth: '95vw',
+      disableClose: false,
+      autoFocus: true,
+      data: {
+        userId: currentProfile.userId,
+        username: currentProfile.username,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result?.success) {
+        console.log('✅ Report submitted successfully');
+      }
     });
   }
 

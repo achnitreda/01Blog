@@ -11,3 +11,5 @@ export * from './follow.model';
 
 export * from './notification.model';
 export * from './notification-summary.model';
+
+export * from './report.model';

@@ -36,8 +36,29 @@
         <mat-icon>account_circle</mat-icon>
       </div>
       <div class="profile-details">
-        <h2>{{ profile()!.username }}</h2>
-        <p class="joined-date">Joined {{ profile()!.joinedAt | date: 'MMM d, yyyy' }}</p>
+        <div>
+          <h2>{{ profile()!.username }}</h2>
+          <p class="joined-date">Joined {{ profile()!.joinedAt | date: 'MMM d, yyyy' }}</p>
+        </div>
+        @if (!profile()?.isOwnProfile) {
+        <div>
+          <button
+            mat-icon-button
+            class="menu-btn"
+            [matMenuTriggerFor]="profileMenu"
+            aria-label="More options"
+          >
+            <mat-icon>more_vert</mat-icon>
+          </button>
+
+          <mat-menu #profileMenu="matMenu">
+            <button mat-menu-item (click)="openReportDialog()">
+              <mat-icon>flag</mat-icon>
+              <span>Report User</span>
+            </button>
+          </mat-menu>
+        </div>
+        }
       </div>
     </div>
 

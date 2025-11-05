@@ -81,7 +81,9 @@
   }
 
   .profile-details {
-    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
 
     h2 {
       margin: 0 0 4px 0;
@@ -101,6 +103,23 @@
 
       @media (max-width: 576px) {
         font-size: 13px;
+      }
+    }
+
+    // Three-dot Menu Button
+    .menu-btn {
+      color: #7c7c7c;
+      transition: all 0.2s;
+
+      &:hover {
+        background: rgba(255, 69, 0, 0.08);
+        color: #ff4500;
+      }
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
       }
     }
   }
