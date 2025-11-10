@@ -13,3 +13,7 @@ export * from './notification.model';
 export * from './notification-summary.model';
 
 export * from './report.model';
+
+export * from './admin-user.model';
+export * from './admin-post.model';
+export * from './admin-stats.model';

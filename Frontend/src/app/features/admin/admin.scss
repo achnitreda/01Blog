@@ -1,0 +1,171 @@
+.admin-container {
+  display: flex;
+  min-height: calc(100vh - 64px); // Account for navbar height
+  background: #f6f7f8;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    min-height: calc(100vh - 56px);
+  }
+}
+
+// Sidebar
+.admin-sidebar {
+  width: 260px;
+  background: white;
+  border-right: 1px solid #edeff1;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  overflow-y: auto;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #edeff1;
+  }
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 20px;
+  border-bottom: 1px solid #edeff1;
+  background: linear-gradient(135deg, #ff4500 0%, #ff6b35 100%);
+  color: white;
+
+  .admin-icon {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px;
+
+    .admin-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+
+    h2 {
+      font-size: 18px;
+    }
+  }
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 8px 0;
+
+  mat-nav-list {
+    padding: 0;
+  }
+
+  .nav-item {
+    margin: 4px 8px;
+    border-radius: 8px;
+    color: #1a1a1b;
+    transition: all 0.2s;
+    height: 48px;
+
+    mat-icon {
+      color: #7c7c7c;
+      transition: color 0.2s;
+    }
+
+    &:hover:not(.active) {
+      background: #f6f7f8;
+
+      mat-icon {
+        color: #ff4500;
+      }
+    }
+
+    &.active {
+      background: rgba(255, 69, 0, 0.1);
+      color: #ff4500;
+      font-weight: 500;
+
+      mat-icon {
+        color: #ff4500;
+      }
+    }
+
+    // Material overrides
+    ::ng-deep {
+      .mat-mdc-list-item-unscoped-content {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    display: flex;
+    overflow-x: auto;
+    padding: 8px;
+
+    mat-nav-list {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-item {
+      margin: 0;
+      white-space: nowrap;
+      min-width: 120px;
+    }
+  }
+}
+
+// Main Content
+.admin-content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+
+  @media (max-width: 576px) {
+    padding: 12px;
+  }
+}
+
+// Custom scrollbar for sidebar
+.admin-sidebar {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f6f7f8;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #d0d0d0;
+    border-radius: 3px;
+
+    &:hover {
+      background: #b0b0b0;
+    }
+  }
+}

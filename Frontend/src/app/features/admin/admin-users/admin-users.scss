@@ -1,0 +1,369 @@
+.users-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// Header
+.page-header {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    .header-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #0079d3;
+    }
+
+    h1 {
+      margin: 0 0 4px 0;
+      font-size: 28px;
+      font-weight: 600;
+      color: #1a1a1b;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: #7c7c7c;
+    }
+  }
+
+  @media (max-width: 576px) {
+    padding: 16px;
+
+    .header-content {
+      .header-icon {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  }
+}
+
+// Controls Section
+.controls-section {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+// Filter Chips
+.filter-chips {
+  flex: 1;
+
+  mat-chip-listbox {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  mat-chip-option {
+    font-size: 14px;
+
+    &.mat-mdc-chip-selected {
+      background: #ff4500 !important;
+      color: white !important;
+    }
+  }
+}
+
+// Search Field
+.search-field {
+  min-width: 300px;
+
+  @media (max-width: 768px) {
+    min-width: 100%;
+    width: 100%;
+  }
+}
+
+// Content Section
+.content-section {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  min-height: 400px;
+}
+
+// Loading State
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  gap: 16px;
+
+  p {
+    margin: 0;
+    color: #7c7c7c;
+    font-size: 14px;
+  }
+}
+
+// Error State
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  gap: 12px;
+  text-align: center;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ea0027;
+  }
+
+  .retry-icon {
+    font-size: 34px;
+    width: 64px;
+    height: 34px;
+    color: #ea0027;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1b;
+  }
+
+  p {
+    margin: 0;
+    color: #7c7c7c;
+    font-size: 14px;
+  }
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+}
+
+// Empty State
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 24px;
+  text-align: center;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #d0d0d0;
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    margin: 0 0 8px 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #1a1a1b;
+  }
+
+  p {
+    margin: 0 0 16px 0;
+    color: #7c7c7c;
+    font-size: 14px;
+  }
+}
+
+// Table Container
+.table-container {
+  overflow-x: auto;
+}
+
+// Users Table
+.users-table {
+  width: 100%;
+
+  th {
+    font-weight: 600;
+    color: #1a1a1b;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: #f6f7f8;
+  }
+
+  td {
+    padding: 16px !important;
+    font-size: 14px;
+    vertical-align: middle;
+  }
+
+  tr {
+    transition: background 0.2s;
+
+    &:hover {
+      background: #f6f7f8;
+    }
+  }
+
+  // Username Cell
+  .username-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .username {
+      font-weight: 500;
+      color: #1a1a1b;
+    }
+
+    .admin-badge {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #ff4500;
+    }
+  }
+
+  // Email
+  .email {
+    color: #7c7c7c;
+    font-size: 13px;
+  }
+
+  // Role Badge
+  .role-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #e8e8e8;
+    color: #1a1a1b;
+
+    &.admin {
+      background: #ffe5d9;
+      color: #ff4500;
+    }
+  }
+
+  // Status Badge
+  .status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #e8f5e9;
+    color: #2e7d32;
+
+    &.banned {
+      background: #ffebee;
+      color: #c62828;
+    }
+  }
+
+  .ban-reason {
+    margin-top: 4px;
+    font-size: 12px;
+    color: #7c7c7c;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // Count
+  .count {
+    color: #1a1a1b;
+    font-weight: 500;
+
+    &.has-reports {
+      color: #ff4500;
+      font-weight: 600;
+    }
+  }
+
+  // Date
+  .date {
+    color: #7c7c7c;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+// Results Footer
+.results-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #edeff1;
+  background: #f6f7f8;
+
+  p {
+    margin: 0;
+    font-size: 14px;
+    color: #7c7c7c;
+    text-align: center;
+  }
+}
+
+// Menu Delete Action
+.delete-action {
+  color: #ea0027;
+
+  mat-icon {
+    color: #ea0027;
+  }
+}
+
+// Responsive
+@media (max-width: 1200px) {
+  .users-table {
+    .email,
+    .ban-reason {
+      max-width: 150px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .users-table {
+    font-size: 13px;
+
+    th,
+    td {
+      padding: 12px 8px !important;
+    }
+
+    .email,
+    .ban-reason {
+      max-width: 100px;
+    }
+  }
+}

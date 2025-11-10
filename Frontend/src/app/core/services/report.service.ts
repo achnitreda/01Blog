@@ -2,7 +2,13 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { ReportRequest, ReportSubmitResponse } from '../../shared/models';
+import {
+  Report,
+  ReportRequest,
+  ReportStatistics,
+  ReportSubmitResponse,
+  ResolveReportRequest,
+} from '../../shared/models';
 
 @Injectable({
   providedIn: 'root',
@@ -101,5 +107,79 @@ export class ReportService {
 
     console.error('❌ Report service error:', errorMessage);
     return throwError(() => new Error(errorMessage));
+  }
+
+  // ============================================
+  // ADMIN METHODS
+  // ============================================
+
+  getAllReports(): Observable<Report[]> {
+    return this.http.get<Report[]>(`${this.apiUrl.replace('/reports', '/admin/reports')}`).pipe(
+      tap((reports) => {
+        console.log(`✅ Loaded ${reports.length} reports`);
+      }),
+      catchError(this.handleError),
+    );
+  }
+
+  getReportsByStatus(status: string): Observable<Report[]> {
+    return this.http
+      .get<Report[]>(`${this.apiUrl.replace('/reports', '/admin/reports')}/status/${status}`)
+      .pipe(
+        tap((reports) => {
+          console.log(`✅ Loaded ${reports.length} ${status} reports`);
+        }),
+        catchError(this.handleError),
+      );
+  }
+
+  getReportById(reportId: number): Observable<Report> {
+    return this.http
+      .get<Report>(`${this.apiUrl.replace('/reports', '/admin/reports')}/${reportId}`)
+      .pipe(
+        tap((report) => {
+          console.log(`✅ Loaded report #${reportId}`);
+        }),
+        catchError(this.handleError),
+      );
+  }
+
+  getReportsForUser(userId: number): Observable<Report[]> {
+    return this.http
+      .get<Report[]>(`${this.apiUrl.replace('/reports', '/admin/reports')}/user/${userId}`)
+      .pipe(
+        tap((reports) => {
+          console.log(`✅ Loaded ${reports.length} reports for user ${userId}`);
+        }),
+        catchError(this.handleError),
+      );
+  }
+
+  resolveReport(reportId: number, action: string): Observable<Report> {
+    const request: ResolveReportRequest = { action };
+
+    return this.http
+      .put<Report>(
+        `${this.apiUrl.replace('/reports', '/admin/reports')}/${reportId}/resolve`,
+        request,
+      )
+      .pipe(
+        tap((report) => {
+          console.log(`✅ Report #${reportId} resolved: ${action}`);
+        }),
+        catchError(this.handleError),
+      );
+  }
+
+  getReportStatistics(): Observable<ReportStatistics> {
+    return this.http
+      .get<ReportStatistics>(`${this.apiUrl.replace('/reports', '/admin/reports')}/statistics`)
+      .pipe(
+        tap((stats) => {
+          console.log('✅ Report statistics loaded');
+          console.log(`Total: ${stats.total}, Pending: ${stats.pending}`);
+        }),
+        catchError(this.handleError),
+      );
   }
 }

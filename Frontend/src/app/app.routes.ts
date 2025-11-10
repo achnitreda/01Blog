@@ -55,6 +55,33 @@ export const routes: Routes = [
     path: 'admin',
     component: Admin,
     canActivate: [adminGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full',
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./features/admin/admin-dashboard/admin-dashboard').then((m) => m.AdminDashboard),
+      },
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./features/admin/admin-users/admin-users').then((m) => m.AdminUsers),
+      },
+      {
+        path: 'posts',
+        loadComponent: () =>
+          import('./features/admin/admin-posts/admin-posts').then((m) => m.AdminPosts),
+      },
+      {
+        path: 'reports',
+        loadComponent: () =>
+          import('./features/admin/admin-reports/admin-reports').then((m) => m.AdminReports),
+      },
+    ],
   },
   // Fallback route
   {

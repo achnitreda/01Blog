@@ -8,6 +8,7 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService, NotificationService } from '../../../core/services';
 import { MatBadgeModule } from '@angular/material/badge';
 import { NotificationDropdown } from '../notification-dropdown/notification-dropdown';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-navbar',
@@ -21,6 +22,7 @@ import { NotificationDropdown } from '../notification-dropdown/notification-drop
     MatMenuModule,
     MatBadgeModule,
     NotificationDropdown,
+    MatDividerModule,
   ],
   templateUrl: './navbar.html',
   styleUrl: './navbar.scss',
@@ -80,6 +82,14 @@ export class Navbar {
     if (!clickedInside && this.showNotificationDropdown()) {
       this.closeNotificationDropdown();
     }
+  }
+
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
+
+  goToAdminPanel(): void {
+    this.router.navigate(['/admin']);
   }
 
   onLogout(): void {

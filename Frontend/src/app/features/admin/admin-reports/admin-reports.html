@@ -1,0 +1,173 @@
+<div class="reports-container">
+  <div class="page-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">flag</mat-icon>
+      <div>
+        <h1>Report Management</h1>
+        <p>Review and manage user reports</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls-section">
+    <div class="filter-chips">
+      <mat-chip-listbox [value]="currentFilter" (change)="setFilter($any($event.value))">
+        <mat-chip-option value="all"> All Reports ({{ getFilterCount('all') }}) </mat-chip-option>
+        <mat-chip-option value="PENDING">
+          Pending ({{ getFilterCount('PENDING') }})
+        </mat-chip-option>
+        <mat-chip-option value="RESOLVED">
+          Resolved ({{ getFilterCount('RESOLVED') }})
+        </mat-chip-option>
+        <mat-chip-option value="DISMISSED">
+          Dismissed ({{ getFilterCount('DISMISSED') }})
+        </mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+  </div>
+
+  <div class="content-section">
+    @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading reports...</p>
+    </div>
+    } @if (errorMessage() && !isLoading()) {
+    <div class="error-state">
+      <mat-icon>error_outline</mat-icon>
+      <h3>Failed to Load Reports</h3>
+      <p>{{ errorMessage() }}</p>
+      <button mat-raised-button color="primary" (click)="retry()">
+        <mat-icon class="retry-icon">refresh</mat-icon>
+        <span>Retry</span>
+      </button>
+    </div>
+    } @if (!isLoading() && !errorMessage() && filteredReports().length === 0) {
+    <div class="empty-state">
+      <mat-icon>check_circle</mat-icon>
+      <h3>No Reports Found</h3>
+      <p>
+        @if (currentFilter() === 'PENDING') { All reports have been reviewed } @else if
+        (currentFilter() === 'all') { No reports have been submitted } @else { No {{
+        currentFilter().toLowerCase() }} reports }
+      </p>
+    </div>
+    } @if (!isLoading() && !errorMessage() && filteredReports().length > 0) {
+    <div class="reports-list">
+      @for (report of filteredReports(); track report.id) {
+      <mat-expansion-panel class="report-card">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <div class="report-header">
+              <div class="users-info">
+                <span class="reporter">
+                  <mat-icon>person</mat-icon>
+                  &#64;{{ report.reporterUsername }}
+                </span>
+                <mat-icon class="arrow-icon">arrow_forward</mat-icon>
+                <span class="reported" [class.banned]="report.reportedUserBanned">
+                  <mat-icon>flag</mat-icon>
+                  &#64;{{ report.reportedUsername }}
+                </span>
+                @if (report.reportedUserBanned) {
+                <span class="banned-badge">Banned</span>
+                }
+              </div>
+              <div class="meta-info">
+                <span class="status-badge" [class]="getStatusClass(report.status)">
+                  {{ report.status }}
+                </span>
+                <span class="date">{{ report.createdAt | timeAgo }}</span>
+              </div>
+            </div>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="report-details">
+          <div class="detail-section">
+            <h4>
+              <mat-icon>description</mat-icon>
+              Reason
+            </h4>
+            <p class="reason-text">{{ report.reason }}</p>
+          </div>
+
+          <div class="detail-section info-grid">
+            <div class="info-item">
+              <span class="label">Report ID:</span>
+              <span class="value">#{{ report.id }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Status:</span>
+              <span class="value status-badge" [class]="getStatusClass(report.status)">
+                {{ report.status }}
+              </span>
+            </div>
+            <div class="info-item">
+              <span class="label">Submitted:</span>
+              <span class="value">{{ report.createdAt | date: 'MMM d, y h:mm a' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Reported User Status:</span>
+              <span class="value" [class.banned-text]="report.reportedUserBanned">
+                {{ report.reportedUserBanned ? 'Banned' : 'Active' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="actions-section">
+            @if (isReportActionLoading(report.id)) {
+            <div class="loading-actions">
+              <mat-spinner diameter="24"></mat-spinner>
+              <span>Processing...</span>
+            </div>
+            } @else {
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+              <button mat-stroked-button (click)="viewReporter(report.reporterId)">
+                <mat-icon>person</mat-icon>
+                <span>View Reporter</span>
+              </button>
+              <button
+                mat-stroked-button
+                (click)="viewReportedUser(report.reportedUserId)"
+                class="reported-btn"
+              >
+                <mat-icon>flag</mat-icon>
+                <span>View Reported User</span>
+              </button>
+            </div>
+
+            <!-- Resolution Actions (only for pending) -->
+            @if (isPending(report)) {
+            <div class="resolution-actions">
+              <button mat-raised-button class="resolve-btn" (click)="resolveAsResolved(report)">
+                <mat-icon>check_circle</mat-icon>
+                <span>Mark as Resolved</span>
+              </button>
+              <button mat-raised-button class="dismiss-btn" (click)="dismissReport(report)">
+                <mat-icon>cancel</mat-icon>
+                <span>Dismiss Report</span>
+              </button>
+            </div>
+            }
+
+            <!-- Already Resolved Message -->
+            @if (!isPending(report)) {
+            <div class="resolved-message">
+              <mat-icon>info</mat-icon>
+              <span> This report has been {{ report.status.toLowerCase() }} </span>
+            </div>
+            } }
+          </div>
+        </div>
+      </mat-expansion-panel>
+      }
+    </div>
+
+    <div class="results-footer">
+      <p>Showing {{ filteredReports().length }} of {{ allReports().length }} reports</p>
+    </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,180 @@
+<div class="posts-container">
+  <div class="page-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">article</mat-icon>
+      <div>
+        <h1>Post Management</h1>
+        <p>Manage all posts in the system</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="controls-section">
+    <div class="filter-chips">
+      <mat-chip-listbox [value]="currentFilter" (change)="setFilter($any($event.value))">
+        <mat-chip-option value="all"> All Posts ({{ getFilterCount('all') }}) </mat-chip-option>
+        <mat-chip-option value="visible">
+          Visible ({{ getFilterCount('visible') }})
+        </mat-chip-option>
+        <mat-chip-option value="hidden"> Hidden ({{ getFilterCount('hidden') }}) </mat-chip-option>
+      </mat-chip-listbox>
+    </div>
+
+    <mat-form-field class="search-field" appearance="outline">
+      <mat-label>Search posts</mat-label>
+      <input
+        matInput
+        [value]="searchQuery()"
+        (input)="onSearchChange($any($event.target).value)"
+        placeholder="Title, content, or author..."
+      />
+      <mat-icon matPrefix>search</mat-icon>
+      @if (searchQuery()) {
+      <button matSuffix mat-icon-button (click)="onSearchChange('')" aria-label="Clear search">
+        <mat-icon>close</mat-icon>
+      </button>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="content-section">
+    @if (isLoading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading posts...</p>
+    </div>
+    } @if (errorMessage() && !isLoading()) {
+    <div class="error-state">
+      <mat-icon>error_outline</mat-icon>
+      <h3>Failed to Load Posts</h3>
+      <p>{{ errorMessage() }}</p>
+      <button mat-raised-button color="primary" (click)="retry()">
+        <mat-icon class="retry-icon">refresh</mat-icon>
+        <span>Retry</span>
+      </button>
+    </div>
+    } @if (!isLoading() && !errorMessage() && filteredPosts().length === 0 && !searchQuery()) {
+    <div class="empty-state">
+      <mat-icon>article</mat-icon>
+      <h3>No Posts Found</h3>
+      <p>No posts match the selected filter</p>
+    </div>
+    } @if (!isLoading() && !errorMessage() && filteredPosts().length === 0 && searchQuery()) {
+    <div class="empty-state">
+      <mat-icon>search_off</mat-icon>
+      <h3>No Results</h3>
+      <p>No posts found for "{{ searchQuery() }}"</p>
+      <button mat-button (click)="onSearchChange('')">Clear Search</button>
+    </div>
+    } @if (!isLoading() && !errorMessage() && filteredPosts().length > 0) {
+    <div class="table-container">
+      <table mat-table [dataSource]="filteredPosts()" class="posts-table">
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef>Title</th>
+          <td mat-cell *matCellDef="let post">
+            <div class="title-cell">
+              <span class="title" [title]="post.title"> {{ truncateText(post.title, 50) }} </span>
+              @if (post.mediaUrl) {
+              <mat-icon class="media-icon" [title]="post.mediaType || 'Media'">
+                {{ post.mediaType === 'image' ? 'image' : 'videocam' }}
+              </mat-icon>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="author">
+          <th mat-header-cell *matHeaderCellDef>Author</th>
+          <td mat-cell *matCellDef="let post">
+            <div class="author-cell">
+              <span class="username">&#64;{{ post.authorUsername }}</span>
+              @if (post.authorBanned) {
+              <span class="banned-badge">Banned</span>
+              }
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let post">
+            <span class="status-badge" [class.hidden]="post.hidden">
+              {{ post.hidden ? 'Hidden' : 'Visible' }}
+            </span>
+            @if (post.hidden && post.hiddenReason) {
+            <div class="hide-reason" [title]="post.hiddenReason">
+              Reason: {{ truncateText(post.hiddenReason, 40) }}
+            </div>
+            }
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="likes">
+          <th mat-header-cell *matHeaderCellDef>Likes</th>
+          <td mat-cell *matCellDef="let post">
+            <span class="count">{{ post.likesCount }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="comments">
+          <th mat-header-cell *matHeaderCellDef>Comments</th>
+          <td mat-cell *matCellDef="let post">
+            <span class="count">{{ post.commentsCount }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="created">
+          <th mat-header-cell *matHeaderCellDef>Created</th>
+          <td mat-cell *matCellDef="let post">
+            <span class="date">{{ post.createdAt | date: 'MMM d, y' }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let post">
+            @if (isPostActionLoading(post.id)) {
+            <mat-spinner diameter="24"></mat-spinner>
+            } @else {
+            <button mat-icon-button [matMenuTriggerFor]="postMenu" aria-label="Post actions">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+
+            <mat-menu #postMenu="matMenu">
+              <button mat-menu-item (click)="viewPost(post.id)">
+                <mat-icon>visibility</mat-icon>
+                <span>View Post</span>
+              </button>
+
+              @if (!post.hidden) {
+              <button mat-menu-item (click)="hidePost(post)">
+                <mat-icon>visibility_off</mat-icon>
+                <span>Hide Post</span>
+              </button>
+              } @else {
+              <button mat-menu-item (click)="unhidePost(post)">
+                <mat-icon>visibility</mat-icon>
+                <span>Unhide Post</span>
+              </button>
+              }
+
+              <button mat-menu-item class="delete-action" (click)="deletePost(post)">
+                <mat-icon>delete</mat-icon>
+                <span>Delete Post</span>
+              </button>
+            </mat-menu>
+            }
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    <div class="results-footer">
+      <p>Showing {{ filteredPosts().length }} of {{ allPosts().length }} posts</p>
+    </div>
+    }
+  </div>
+</div>

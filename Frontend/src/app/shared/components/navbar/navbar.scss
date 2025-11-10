@@ -109,6 +109,26 @@
     span {
       display: none; // Hide text on mobile, show only icons
     }
+
+    .admin-link {
+      background: transparent;
+
+      &::before {
+        display: none;
+      }
+
+      mat-icon {
+        color: #ffd700;
+      }
+
+      &.active {
+        background: transparent;
+
+        mat-icon {
+          color: #ffa500;
+        }
+      }
+    }
   }
 
   @media (max-width: 576px) {
@@ -190,6 +210,38 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+.admin-link {
+  position: relative;
+  background: rgba(255, 255, 255, 0.1);
+
+  &::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #ffd700, #ffa500);
+    border-radius: 2px 2px 0 0;
+  }
+
+  mat-icon {
+    color: #ffd700;
+  }
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  &.active {
+    background: rgba(255, 255, 255, 0.2);
+
+    &::before {
+      height: 4px;
+    }
   }
 }
 
