@@ -1,10 +1,5 @@
 package com.rachnit.blog01.entity;
 
-import java.time.LocalDateTime;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -14,6 +9,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "comments")
@@ -28,6 +26,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User author;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,10 +36,10 @@ public class Comment {
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
-    
+
     // Constructors
     public Comment() {}
-    
+
     public Comment(String content, User author, BlogPost post) {
         this.content = content;
         this.author = author;
@@ -49,18 +48,43 @@ public class Comment {
     }
 
     // Getters and setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    
-    public String getContent() { return content; }
-    public void setContent(String content) { this.content = content; }
-    
-    public User getAuthor() { return author; }
-    public void setAuthor(User author) { this.author = author; }
-    
-    public BlogPost getPost() { return post; }
-    public void setPost(BlogPost post) { this.post = post; }
-    
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public BlogPost getPost() {
+        return post;
+    }
+
+    public void setPost(BlogPost post) {
+        this.post = post;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 }
