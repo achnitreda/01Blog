@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -10,6 +10,8 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './media-upload.scss',
 })
 export class MediaUpload {
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   @Input() maxImageSize: number = 5 * 1024 * 1024; // 5MB default
   @Input() maxVideoSize: number = 50 * 1024 * 1024;
   @Input() allowedImageTypes: string[] = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
@@ -157,6 +159,8 @@ export class MediaUpload {
     this.errorMessage = null;
     this.isImage = false;
     this.isVideo = false;
+
+    this.fileInput.nativeElement.value = '';
 
     this.fileRemoved.emit();
   }
