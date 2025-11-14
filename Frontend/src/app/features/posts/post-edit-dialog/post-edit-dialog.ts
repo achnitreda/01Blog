@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MediaType, Post, UpdatePostRequest } from '../../../shared/models';
+import { Post } from '../../../shared/models';
 import { PostService } from '../../../core/services';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
@@ -10,6 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
+import { MediaUpload } from '../../../shared/components/media-upload/media-upload';
 
 @Component({
   selector: 'app-post-edit-dialog',
@@ -23,6 +24,7 @@ import { MatRadioModule } from '@angular/material/radio';
     MatIconModule,
     MatRadioModule,
     MatProgressSpinnerModule,
+    MediaUpload,
   ],
   templateUrl: './post-edit-dialog.html',
   styleUrl: '../post-create-dialog/post-create-dialog.scss',
@@ -33,16 +35,15 @@ export class PostEditDialog implements OnInit {
   // Signals for reactive state
   isSubmitting = signal(false);
   errorMessage = signal<string | null>(null);
-  mediaPreview = signal<string | null>(null);
+  selectedFile = signal<File | null>(null);
+  existingMediaUrl = signal<string | undefined>(undefined);
+  mediaChanged = signal(false);
 
   // Character limits
   readonly TITLE_MIN = 3;
   readonly TITLE_MAX = 255;
   readonly CONTENT_MIN = 10;
   readonly CONTENT_MAX = 10000;
-
-  // Media types
-  readonly MediaType = MediaType;
 
   constructor(
     private fb: FormBuilder,
@@ -76,24 +77,6 @@ export class PostEditDialog implements OnInit {
           Validators.pattern(/^[^<>"']*$/),
         ],
       ],
-      mediaUrl: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(1000),
-          Validators.pattern(/^https?:\/\/.*\.(jpg|jpeg|png|gif|mp4|mov|avi)$/i),
-        ],
-      ],
-      mediaType: [MediaType.IMAGE, Validators.required],
-    });
-
-    // Watch media URL changes for preview
-    this.postForm.get('mediaUrl')?.valueChanges.subscribe((url) => {
-      if (url && this.postForm.get('mediaUrl')?.valid) {
-        this.mediaPreview.set(url);
-      } else {
-        this.mediaPreview.set(null);
-      }
     });
   }
 
@@ -103,14 +86,22 @@ export class PostEditDialog implements OnInit {
     this.postForm.patchValue({
       title: post.title,
       content: post.content,
-      mediaUrl: post.mediaUrl,
-      mediaType: post.mediaType,
     });
 
-    // Set initial preview
-    this.mediaPreview.set(post.mediaUrl);
+    if (post.mediaUrl) {
+      this.existingMediaUrl.set(post.mediaUrl);
+    }
+  }
 
-    console.log('📝 Editing post:', post.id, post.title);
+  onFileSelected(file: File): void {
+    this.selectedFile.set(file);
+    this.mediaChanged.set(true);
+    this.errorMessage.set(null);
+  }
+
+  onFileRemoved(): void {
+    this.selectedFile.set(null);
+    this.mediaChanged.set(true);
   }
 
   onSubmit(): void {
@@ -122,54 +113,49 @@ export class PostEditDialog implements OnInit {
     }
 
     if (!this.hasChanges()) {
-      console.log('ℹ️ No changes detected, closing dialog');
       this.dialogRef.close();
       return;
     }
 
     this.isSubmitting.set(true);
+    this.postForm.disable();
 
-    const updateData: UpdatePostRequest = {};
+    const currentTitle = this.postForm.value.title.trim();
+    const currentContent = this.postForm.value.content.trim();
 
-    if (this.postForm.value.title !== this.data.post.title) {
-      updateData.title = this.postForm.value.title.trim();
-    }
+    const titleChanged = currentTitle !== this.data.post.title;
+    const contentChanged = currentContent !== this.data.post.content;
 
-    if (this.postForm.value.content !== this.data.post.content) {
-      updateData.content = this.postForm.value.content.trim();
-    }
-
-    if (this.postForm.value.mediaUrl !== this.data.post.mediaUrl) {
-      updateData.mediaUrl = this.postForm.value.mediaUrl.trim();
-    }
-
-    if (this.postForm.value.mediaType !== this.data.post.mediaType) {
-      updateData.mediaType = this.postForm.value.mediaType;
-    }
-
-    this.postService.updatePost(this.data.post.id, updateData).subscribe({
-      next: (updatedPost) => {
-        console.log('✅ Post updated successfully:', updatedPost.id);
-        this.isSubmitting.set(false);
-
-        // Close dialog and return the updated post
-        this.dialogRef.close(updatedPost);
-      },
-      error: (error) => {
-        console.error('❌ Failed to update post:', error.message);
-        this.isSubmitting.set(false);
-        this.errorMessage.set(error.message || 'Failed to update post. Please try again.');
-      },
-    });
+    this.postService
+      .updatePostWithFile(
+        this.data.post.id,
+        titleChanged ? currentTitle : undefined,
+        contentChanged ? currentContent : undefined,
+        this.mediaChanged() ? this.selectedFile() : undefined,
+      )
+      .subscribe({
+        next: (updatedPost) => {
+          console.log('Post updated successfully:', updatedPost.id);
+          this.isSubmitting.set(false);
+          this.postForm.enable();
+          // Close dialog and return the updated post
+          this.dialogRef.close(updatedPost);
+        },
+        error: (error) => {
+          console.error('Failed to update post:', error.message);
+          this.isSubmitting.set(false);
+          this.postForm.enable();
+          this.errorMessage.set(error.message || 'Failed to update post. Please try again.');
+        },
+      });
   }
 
   private hasChanges(): boolean {
-    return (
-      this.postForm.value.title !== this.data.post.title ||
-      this.postForm.value.content !== this.data.post.content ||
-      this.postForm.value.mediaUrl !== this.data.post.mediaUrl ||
-      this.postForm.value.mediaType !== this.data.post.mediaType
-    );
+    const titleChanged = this.postForm.value.title !== this.data.post.title;
+    const contentChanged = this.postForm.value.content !== this.data.post.content;
+    const mediaChangedFlag = this.mediaChanged();
+
+    return titleChanged || contentChanged || mediaChangedFlag;
   }
 
   onCancel(): void {
@@ -224,16 +210,6 @@ export class PostEditDialog implements OnInit {
         return 'Content cannot contain HTML tags or script characters';
       }
     }
-
-    if (fieldName === 'mediaUrl') {
-      if (field.hasError('pattern')) {
-        return 'Must be a valid image URL (jpg, jpeg, png, gif) or video URL (mp4, mov, avi)';
-      }
-      if (field.hasError('maxlength')) {
-        return 'URL must not exceed 1000 characters';
-      }
-    }
-
     return '';
   }
 
@@ -241,8 +217,6 @@ export class PostEditDialog implements OnInit {
     const labels: { [key: string]: string } = {
       title: 'Title',
       content: 'Content',
-      mediaUrl: 'Media URL',
-      mediaType: 'Media Type',
     };
     return labels[fieldName] || fieldName;
   }
@@ -252,13 +226,5 @@ export class PostEditDialog implements OnInit {
       const control = formGroup.get(key);
       control?.markAsTouched();
     });
-  }
-
-  isVideoPreview(): boolean {
-    return this.postForm.get('mediaType')?.value === MediaType.VIDEO;
-  }
-
-  isImagePreview(): boolean {
-    return this.postForm.get('mediaType')?.value === MediaType.IMAGE;
   }
 }

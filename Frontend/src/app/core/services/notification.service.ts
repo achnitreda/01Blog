@@ -15,7 +15,7 @@ export class NotificationService {
   getUnreadNotifications(): Observable<Notification[]> {
     return this.http.get<Notification[]>(this.apiUrl).pipe(
       tap((notifications) => {
-        console.log(`✅ Loaded ${notifications.length} unread notifications`);
+        console.log(`Loaded ${notifications.length} unread notifications`);
       }),
       catchError(this.handleError),
     );
@@ -24,7 +24,7 @@ export class NotificationService {
   getSummary(): Observable<NotificationSummary> {
     return this.http.get<NotificationSummary>(`${this.apiUrl}/summary`).pipe(
       tap((summary) => {
-        console.log(`✅ Unread count: ${summary.unreadCount}`);
+        console.log(`Unread count: ${summary.unreadCount}`);
       }),
       catchError(this.handleError),
     );
@@ -33,7 +33,7 @@ export class NotificationService {
   markAsRead(notificationId: number): Observable<Notification> {
     return this.http.put<Notification>(`${this.apiUrl}/${notificationId}/read`, {}).pipe(
       tap((notification) => {
-        console.log(`✅ Notification ${notificationId} marked as read`);
+        console.log(`Notification ${notificationId} marked as read`);
       }),
       catchError(this.handleError),
     );
@@ -51,7 +51,7 @@ export class NotificationService {
     // Execute all requests in parallel
     return forkJoin(markAsReadRequests).pipe(
       tap(() => {
-        console.log(`✅ Successfully marked ${notificationIds.length} notifications as read`);
+        console.log(`Successfully marked ${notificationIds.length} notifications as read`);
       }),
       catchError((error) => {
         console.error('❌ Failed to mark all notifications as read:', error);

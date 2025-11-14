@@ -12,11 +12,10 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { PostService } from '../../../core/services';
-import { CreatePostRequest, MediaType } from '../../../shared/models';
+import { MediaUpload } from '../../../shared/components/media-upload/media-upload';
 
 @Component({
   selector: 'app-post-create-dialog',
-  standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -27,6 +26,7 @@ import { CreatePostRequest, MediaType } from '../../../shared/models';
     MatIconModule,
     MatRadioModule,
     MatProgressSpinnerModule,
+    MediaUpload,
   ],
   templateUrl: './post-create-dialog.html',
   styleUrl: './post-create-dialog.scss',
@@ -37,16 +37,13 @@ export class PostCreateDialog implements OnInit {
   // Signals for reactive state
   isSubmitting = signal(false);
   errorMessage = signal<string | null>(null);
-  mediaPreview = signal<string | null>(null);
+  selectedFile = signal<File | null>(null);
 
   // Character limits
   readonly TITLE_MIN = 3;
   readonly TITLE_MAX = 255;
   readonly CONTENT_MIN = 10;
   readonly CONTENT_MAX = 10000;
-
-  // Media types
-  readonly MediaType = MediaType;
 
   constructor(
     private fb: FormBuilder,
@@ -81,25 +78,16 @@ export class PostCreateDialog implements OnInit {
           Validators.pattern(/^[^<>"']*$/),
         ],
       ],
-      mediaUrl: [
-        '',
-        [
-          Validators.required,
-          Validators.maxLength(1000),
-          Validators.pattern(/^https?:\/\/.*\.(jpg|jpeg|png|gif|mp4|mov|avi)$/i),
-        ],
-      ],
-      mediaType: [MediaType.IMAGE, Validators.required],
     });
+  }
 
-    // Watch media URL changes for preview
-    this.postForm.get('mediaUrl')?.valueChanges.subscribe((url) => {
-      if (url && this.postForm.get('mediaUrl')?.valid) {
-        this.mediaPreview.set(url);
-      } else {
-        this.mediaPreview.set(null);
-      }
-    });
+  onFileSelected(file: File): void {
+    this.selectedFile.set(file);
+    this.errorMessage.set(null);
+  }
+
+  onFileRemoved(): void {
+    this.selectedFile.set(null);
   }
 
   /**
@@ -117,29 +105,26 @@ export class PostCreateDialog implements OnInit {
 
     // Show loading state
     this.isSubmitting.set(true);
+    this.postForm.disable();
 
-    // Prepare post data
-    const postData: CreatePostRequest = {
-      title: this.postForm.value.title.trim(),
-      content: this.postForm.value.content.trim(),
-      mediaUrl: this.postForm.value.mediaUrl.trim(),
-      mediaType: this.postForm.value.mediaType,
-    };
-
-    console.log('📝 Creating post:', postData);
+    // Get form values
+    const title = this.postForm.value.title.trim();
+    const content = this.postForm.value.content.trim();
+    const media = this.selectedFile();
 
     // Call post service
-    this.postService.createPost(postData).subscribe({
+    this.postService.createPostWithFile(title, content, media).subscribe({
       next: (post) => {
-        console.log('✅ Post created successfully:', post.id);
+        console.log('Post created successfully:', post.id);
         this.isSubmitting.set(false);
-
+        this.postForm.enable();
         // Close dialog and return the created post
         this.dialogRef.close(post);
       },
       error: (error) => {
-        console.error('❌ Failed to create post:', error.message);
+        console.error('Failed to create post:', error.message);
         this.isSubmitting.set(false);
+        this.postForm.enable();
         this.errorMessage.set(error.message || 'Failed to create post. Please try again.');
       },
     });
@@ -204,15 +189,6 @@ export class PostCreateDialog implements OnInit {
       }
     }
 
-    if (fieldName === 'mediaUrl') {
-      if (field.hasError('pattern')) {
-        return 'Must be a valid image URL (jpg, jpeg, png, gif) or video URL (mp4, mov, avi)';
-      }
-      if (field.hasError('maxlength')) {
-        return 'URL must not exceed 1000 characters';
-      }
-    }
-
     return '';
   }
 
@@ -223,8 +199,6 @@ export class PostCreateDialog implements OnInit {
     const labels: { [key: string]: string } = {
       title: 'Title',
       content: 'Content',
-      mediaUrl: 'Media URL',
-      mediaType: 'Media Type',
     };
     return labels[fieldName] || fieldName;
   }
@@ -237,19 +211,5 @@ export class PostCreateDialog implements OnInit {
       const control = formGroup.get(key);
       control?.markAsTouched();
     });
-  }
-
-  /**
-   * Check if media preview is video
-   */
-  isVideoPreview(): boolean {
-    return this.postForm.get('mediaType')?.value === MediaType.VIDEO;
-  }
-
-  /**
-   * Check if media preview is image
-   */
-  isImagePreview(): boolean {
-    return this.postForm.get('mediaType')?.value === MediaType.IMAGE;
   }
 }

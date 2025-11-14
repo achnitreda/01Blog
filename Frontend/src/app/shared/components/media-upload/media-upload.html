@@ -1,0 +1,58 @@
+<div class="media-upload-container">
+  @if (!previewUrl) {
+  <div
+    class="upload-zone"
+    [class.dragging]="isDragging"
+    (click)="fileInput.click()"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+  >
+    <mat-icon class="upload-icon">cloud_upload</mat-icon>
+    <p class="upload-text">Click to upload or drag & drop</p>
+    <p class="upload-hint">
+      Images (max 5MB): JPEG, PNG, GIF, WebP<br />
+      Videos (max 50MB): MP4, WebM, MOV
+    </p>
+  </div>
+  } @if (previewUrl) {
+  <div class="preview-zone">
+    @if (isImage) {
+    <div class="image-preview">
+      <img [src]="previewUrl" alt="Preview" />
+    </div>
+    } @if (isVideo) {
+    <div class="video-preview">
+      <video [src]="previewUrl" controls></video>
+    </div>
+    }
+
+    <div class="preview-overlay">
+      <div class="file-info">
+        @if (selectedFile) {
+        <span class="file-name">{{ selectedFile.name }}</span>
+        <span class="file-size">{{ getFileSizeFormatted() }}</span>
+        }
+      </div>
+
+      <button mat-mini-fab color="warn" class="remove-button" (click)="removeFile()" type="button">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+  } @if (errorMessage) {
+  <div class="error-message">
+    <mat-icon>error</mat-icon>
+    <span>{{ errorMessage }}</span>
+  </div>
+  }
+
+  <!-- Hidden File Input -->
+  <input
+    #fileInput
+    type="file"
+    hidden
+    [accept]="getAcceptAttribute()"
+    (change)="onFileInputChange($event)"
+  />
+</div>

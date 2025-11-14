@@ -34,7 +34,7 @@ export class Feed implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log('📰 Feed component initialized');
+    console.log('Feed component initialized');
     this.loadFeed();
   }
 
@@ -49,14 +49,14 @@ export class Feed implements OnInit {
       next: (posts) => {
         this.posts.set(posts);
         this.isLoading.set(false);
-        console.log(`✅ Loaded ${posts.length} posts`);
+        console.log(`Loaded ${posts.length} posts`);
 
         if (posts.length === 0) {
-          console.log('ℹ️ Feed is empty - user may not be following anyone');
+          console.log('Feed is empty - user may not be following anyone');
         }
       },
       error: (error) => {
-        console.error('❌ Failed to load feed:', error);
+        console.error('Failed to load feed:', error);
         this.isLoading.set(false);
         this.errorMessage.set(error.message || 'Failed to load feed. Please try again.');
         this.posts.set([]);
@@ -78,7 +78,7 @@ export class Feed implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('✅ Post created:', result);
+        console.log('Post created:', result);
         this.loadFeed();
       }
     });
@@ -88,7 +88,7 @@ export class Feed implements OnInit {
    * Handle like toggle
    */
   handleLike(post: Post): void {
-    console.log('❤️ Toggling like for post:', post.id);
+    console.log('Toggling like for post:', post.id);
 
     // Store original state for rollback if needed
     const originalIsLiked = post.isLiked;
@@ -109,10 +109,10 @@ export class Feed implements OnInit {
 
     this.postService.toggleLike(post).subscribe({
       next: () => {
-        console.log('✅ Like toggled successfully');
+        console.log('Like toggled successfully');
       },
       error: (error) => {
-        console.error('❌ Failed to toggle like:', error);
+        console.error('Failed to toggle like:', error);
 
         // Rollback on error - restore original state
         const rolledBackPosts = this.posts().map((p) => {
@@ -137,7 +137,7 @@ export class Feed implements OnInit {
    * Handle edit post
    */
   handleEdit(post: Post): void {
-    console.log('✏️ Edit post:', post.id);
+    console.log('Edit post:', post.id);
     const dialogRef = this.dialog.open(PostEditDialog, {
       width: '600px',
       maxWidth: '95vw',
@@ -149,7 +149,7 @@ export class Feed implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('✅ Post updated:', result);
+        console.log('Post updated:', result);
         this.loadFeed();
       }
     });
@@ -159,12 +159,12 @@ export class Feed implements OnInit {
    * Handle delete post
    */
   handleDelete(post: Post): void {
-    console.log('🗑️ Delete post:', post.id);
+    console.log('Delete post:', post.id);
 
     if (confirm(`Are you sure you want to delete "${post.title}"?`)) {
       this.postService.deletePost(post.id).subscribe({
         next: () => {
-          console.log('✅ Post deleted successfully');
+          console.log('Post deleted successfully');
           this.loadFeed();
         },
         error: (error) => {

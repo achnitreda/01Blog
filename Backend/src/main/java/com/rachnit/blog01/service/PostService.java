@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 /**
@@ -47,6 +48,9 @@ public class PostService {
     @Autowired
     private NotificationRepository notificationRepository;
 
+    @Autowired
+    private CloudinaryService cloudinaryService;
+
     /**
      * Get current authenticated user
      */
@@ -73,6 +77,56 @@ public class PostService {
         BlogPost savedPost = postRepository.save(post);
 
         // Generate notifications for all followers
+        createNotificationsForFollowers(savedPost, currentUser);
+
+        return convertToPostResponse(savedPost, currentUser);
+    }
+
+    /**
+     * Create post with file upload (Multipart request)
+     */
+    public PostResponse createPostWithFile(
+        String title,
+        String content,
+        MultipartFile media
+    ) {
+        User currentUser = getCurrentUser();
+
+        String mediaUrl = null;
+        String mediaType = null;
+
+        // If media file is provided, upload to Cloudinary
+        if (media != null && !media.isEmpty()) {
+            try {
+                mediaUrl = cloudinaryService.uploadMedia(media);
+
+                String contentType = media.getContentType();
+                if (contentType != null) {
+                    if (contentType.startsWith("image/")) {
+                        mediaType = "image";
+                    } else if (contentType.startsWith("video/")) {
+                        mediaType = "video";
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(
+                    "Failed to upload media: " + e.getMessage(),
+                    e
+                );
+            }
+        }
+
+        // Create post
+        BlogPost post = new BlogPost(
+            title,
+            content,
+            mediaUrl,
+            mediaType,
+            currentUser
+        );
+
+        BlogPost savedPost = postRepository.save(post);
+
         createNotificationsForFollowers(savedPost, currentUser);
 
         return convertToPostResponse(savedPost, currentUser);
@@ -143,6 +197,84 @@ public class PostService {
         return convertToPostResponse(updatedPost, currentUser);
     }
 
+    /**
+     * Update post with file upload (Multipart request)
+     */
+    public PostResponse updatePostWithFile(
+        Long postId,
+        String title,
+        String content,
+        MultipartFile media
+    ) {
+        User currentUser = getCurrentUser();
+
+        // Verify ownership
+        BlogPost post = postRepository
+            .findByIdAndAuthor(postId, currentUser)
+            .orElseThrow(() ->
+                new RuntimeException(
+                    "Post not found or you don't have permission to edit it"
+                )
+            );
+
+        if (title != null && !title.trim().isEmpty()) {
+            post.setTitle(title);
+        }
+
+        if (content != null && !content.trim().isEmpty()) {
+            post.setContent(content);
+        }
+
+        if (media != null && !media.isEmpty()) {
+            try {
+                // Optional: Delete old media from Cloudinary
+                if (
+                    post.getMediaUrl() != null &&
+                    cloudinaryService.isCloudinaryUrl(post.getMediaUrl())
+                ) {
+                    String oldPublicId = cloudinaryService.extractPublicId(
+                        post.getMediaUrl()
+                    );
+                    String oldResourceType =
+                        cloudinaryService.getResourceTypeFromUrl(
+                            post.getMediaUrl()
+                        );
+                    if (oldPublicId != null && oldResourceType != null) {
+                        cloudinaryService.deleteMedia(
+                            oldPublicId,
+                            oldResourceType
+                        );
+                    }
+                }
+
+                // Upload new media
+                String mediaUrl = cloudinaryService.uploadMedia(media);
+
+                String mediaType = null;
+                String contentType = media.getContentType();
+                if (contentType != null) {
+                    if (contentType.startsWith("image/")) {
+                        mediaType = "image";
+                    } else if (contentType.startsWith("video/")) {
+                        mediaType = "video";
+                    }
+                }
+
+                post.setMediaUrl(mediaUrl);
+                post.setMediaType(mediaType);
+            } catch (Exception e) {
+                throw new RuntimeException(
+                    "Failed to upload media: " + e.getMessage(),
+                    e
+                );
+            }
+        }
+
+        // If neither media nor removeMedia, keep existing media unchanged
+        BlogPost updatedPost = postRepository.save(post);
+        return convertToPostResponse(updatedPost, currentUser);
+    }
+
     public void deletePost(Long postId) {
         User currentUser = getCurrentUser();
 
@@ -154,6 +286,22 @@ public class PostService {
                     "Post not found or you don't have permission to delete it"
                 )
             );
+
+        // Delete media from Cloudinary before deleting post
+        if (
+            post.getMediaUrl() != null &&
+            cloudinaryService.isCloudinaryUrl(post.getMediaUrl())
+        ) {
+            String publicId = cloudinaryService.extractPublicId(
+                post.getMediaUrl()
+            );
+            String resourceType = cloudinaryService.getResourceTypeFromUrl(
+                post.getMediaUrl()
+            );
+            if (publicId != null && resourceType != null) {
+                cloudinaryService.deleteMedia(publicId, resourceType);
+            }
+        }
 
         postRepository.delete(post);
     }

@@ -9,7 +9,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const isAuthEndpoint = req.url.includes('/auth/login') || req.url.includes('/auth/register');
 
   if (token && !isAuthEndpoint) {
-    console.log('🔑 Adding JWT token to request:', req.url);
+    console.log('Adding JWT token to request:', req.url);
 
     const clonedRequest = req.clone({
       setHeaders: {

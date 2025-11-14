@@ -25,7 +25,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router,
   ) {
-    console.log('🔐 AuthService initialized');
+    console.log('AuthService initialized');
   }
 
   // ============================================

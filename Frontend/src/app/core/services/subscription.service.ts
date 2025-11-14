@@ -15,7 +15,7 @@ export class SubscriptionService {
   followUser(userId: number): Observable<FollowResponse> {
     return this.http.post<FollowResponse>(`${this.apiUrl}/${userId}/follow`, {}).pipe(
       tap((response) => {
-        console.log(`✅ Now following @${response.followingUsername}`);
+        console.log(`Now following @${response.followingUsername}`);
       }),
       catchError(this.handleError),
     );
@@ -24,7 +24,7 @@ export class SubscriptionService {
   unfollowUser(userId: number): Observable<FollowResponse> {
     return this.http.delete<FollowResponse>(`${this.apiUrl}/${userId}/unfollow`).pipe(
       tap((response) => {
-        console.log(`✅ Unfollowed @${response.followingUsername}`);
+        console.log(`Unfollowed @${response.followingUsername}`);
       }),
       catchError(this.handleError),
     );
@@ -33,18 +33,18 @@ export class SubscriptionService {
   getUserProfile(userId: number): Observable<UserProfileModel> {
     return this.http.get<UserProfileModel>(`${this.apiUrl}/${userId}/profile`).pipe(
       tap((profile) => {
-        console.log(`✅ Loaded profile: @${profile.username}`);
+        console.log(`Loaded profile: @${profile.username}`);
       }),
       catchError(this.handleError),
     );
   }
 
   getAllUsers(): Observable<UserProfileModel[]> {
-    console.log('📥 Fetching all users for discovery...');
+    console.log('Fetching all users for discovery...');
 
     return this.http.get<UserProfileModel[]>(`${this.apiUrl}`).pipe(
       tap((users) => {
-        console.log(`✅ Loaded ${users.length} users`);
+        console.log(`Loaded ${users.length} users`);
       }),
       catchError(this.handleError),
     );
@@ -53,7 +53,7 @@ export class SubscriptionService {
   getMyProfile(): Observable<UserProfileModel> {
     return this.http.get<UserProfileModel>(`${this.apiUrl}/my-profile`).pipe(
       tap((profile) => {
-        console.log(`✅ Loaded my profile: @${profile.username}`);
+        console.log(`Loaded my profile: @${profile.username}`);
       }),
       catchError(this.handleError),
     );

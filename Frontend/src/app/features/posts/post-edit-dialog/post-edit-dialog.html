@@ -47,52 +47,26 @@
         }
       </mat-form-field>
 
-      <!-- Media URL Field -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Media URL</mat-label>
-        <input
-          matInput
-          type="url"
-          formControlName="mediaUrl"
-          placeholder="https://example.com/image.jpg"
-        />
-        <mat-icon matPrefix>image</mat-icon>
-        <mat-hint>Paste a direct link to an image or video</mat-hint>
-        @if (postForm.get('mediaUrl')?.touched && postForm.get('mediaUrl')?.invalid) {
-        <mat-error>{{ getErrorMessage('mediaUrl') }}</mat-error>
+      <!-- Media Upload Component -->
+      <div class="media-upload-section">
+        <label class="section-label">
+          <mat-icon>photo_camera</mat-icon>
+          Media
+        </label>
+
+        <app-media-upload
+          [existingMediaUrl]="existingMediaUrl()"
+          (fileSelected)="onFileSelected($event)"
+          (fileRemoved)="onFileRemoved()"
+        ></app-media-upload>
+
+        @if (existingMediaUrl() && !selectedFile()) {
+        <p class="media-hint">
+          <mat-icon>info</mat-icon>
+          <span>Upload a new file to replace the current media, or remove it</span>
+        </p>
         }
-      </mat-form-field>
-
-      <!-- Media Type -->
-      <div class="media-type-section">
-        <label class="section-label">Media Type *</label>
-        <mat-radio-group formControlName="mediaType" class="media-type-group">
-          <mat-radio-button [value]="MediaType.IMAGE" class="media-radio">
-            <mat-icon>image</mat-icon>
-            <span>Image</span>
-          </mat-radio-button>
-          <mat-radio-button [value]="MediaType.VIDEO" class="media-radio">
-            <mat-icon>videocam</mat-icon>
-            <span>Video</span>
-          </mat-radio-button>
-        </mat-radio-group>
       </div>
-
-      <!-- Media Preview -->
-      @if (mediaPreview()) {
-      <div class="media-preview-section">
-        <label class="section-label">Preview</label>
-        <div class="media-preview">
-          @if (isImagePreview()) {
-          <img [src]="mediaPreview()!" alt="Media preview" (error)="mediaPreview.set(null)" />
-          } @else if (isVideoPreview()) {
-          <video [src]="mediaPreview()!" controls preload="metadata">
-            Your browser does not support the video tag.
-          </video>
-          }
-        </div>
-      </div>
-      }
     </form>
   </mat-dialog-content>
 
@@ -118,9 +92,11 @@
       <mat-spinner diameter="20"></mat-spinner>
       <span>Updating...</span>
       } @else {
-      <mat-icon>check</mat-icon>
+      <ng-container>
+        <mat-icon>check</mat-icon>
+        <span>Update</span>
+      </ng-container>
       }
-      <span>Update</span>
     </button>
   </mat-dialog-actions>
 </div>

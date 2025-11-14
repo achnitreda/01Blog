@@ -2,7 +2,9 @@
 .dialog-container {
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 24px !important;
   width: 100%;
   background-color: white;
 }
@@ -113,101 +115,6 @@ form {
   margin-bottom: 8px;
 }
 
-// Media Type Section
-.media-type-section {
-  margin-top: 8px;
-}
-
-.media-type-group {
-  display: flex;
-  gap: 16px;
-  margin-top: 8px;
-
-  @media (max-width: 576px) {
-    flex-direction: column;
-    gap: 12px;
-  }
-}
-
-.media-radio {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border: 2px solid #edeff1;
-  border-radius: 8px;
-  transition: all 0.2s;
-  cursor: pointer;
-
-  &:hover {
-    border-color: #ff4500;
-    background: rgba(255, 69, 0, 0.04);
-  }
-
-  mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-    color: #7c7c7c;
-  }
-
-  span {
-    font-size: 14px;
-    font-weight: 500;
-    color: #1a1a1b;
-  }
-
-  // Selected state
-  ::ng-deep .mdc-radio__background {
-    .mdc-radio__outer-circle {
-      border-color: #ff4500 !important;
-    }
-
-    .mdc-radio__inner-circle {
-      border-color: #ff4500 !important;
-    }
-  }
-
-  &.mat-mdc-radio-checked {
-    border-color: #ff4500;
-    background: rgba(255, 69, 0, 0.08);
-
-    mat-icon {
-      color: #ff4500;
-    }
-  }
-
-  @media (max-width: 576px) {
-    padding: 10px 12px;
-  }
-}
-
-// Media Preview Section
-.media-preview-section {
-  margin-top: 8px;
-}
-
-.media-preview {
-  margin-top: 8px;
-  border-radius: 8px;
-  overflow: hidden;
-  background: #f6f7f8;
-  border: 2px solid #edeff1;
-
-  img,
-  video {
-    width: 100%;
-    height: auto;
-    max-height: 300px;
-    object-fit: cover;
-    display: block;
-  }
-
-  video {
-    background: #000;
-  }
-}
-
 // Actions
 .dialog-actions {
   display: flex;
@@ -250,6 +157,11 @@ form {
 
   mat-spinner {
     display: inline-block;
+    margin-right: 8px;
+
+    ::ng-deep circle {
+      stroke: white;
+    }
   }
 
   ::ng-deep .mat-mdc-progress-spinner circle {
@@ -326,11 +238,51 @@ form {
   form {
     gap: 16px;
   }
+}
 
-  .media-preview {
-    img,
-    video {
-      max-height: 200px;
+.media-upload-section {
+  margin: 16px 0;
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: #ff4500;
+    }
+  }
+
+  .media-hint {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #f6f7f8;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #7c7c7c;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #0079d3;
+      flex-shrink: 0;
+    }
+
+    span {
+      flex: 1;
     }
   }
 }

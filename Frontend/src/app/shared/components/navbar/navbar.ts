@@ -47,10 +47,10 @@ export class Navbar {
     this.notificationService.getSummary().subscribe({
       next: (summary) => {
         this.unreadCount.set(summary.unreadCount);
-        console.log(`🔔 Notification badge count: ${summary.unreadCount}`);
+        console.log(`Notification badge count: ${summary.unreadCount}`);
       },
       error: (error) => {
-        console.error('❌ Failed to load notification count:', error.message);
+        console.error('Failed to load notification count:', error.message);
       },
     });
   }

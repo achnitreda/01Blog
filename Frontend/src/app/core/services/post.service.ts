@@ -37,7 +37,7 @@ export class PostService {
   getMyPosts(): Observable<Post[]> {
     return this.http.get<Post[]>(`${environment.apiUrl}/posts/my-posts`).pipe(
       tap((posts) => {
-        console.log(`✅ Fetched ${posts.length} of my posts`);
+        console.log(`Fetched ${posts.length} of my posts`);
       }),
       catchError(this.handleError),
     );
@@ -46,7 +46,7 @@ export class PostService {
   getPostById(postId: number): Observable<Post> {
     return this.http.get<Post>(`${environment.apiUrl}/posts/${postId}`).pipe(
       tap((post) => {
-        console.log(`✅ Fetched post: ${post.title}`);
+        console.log(`Fetched post: ${post.title}`);
       }),
       catchError(this.handleError),
     );
@@ -55,7 +55,7 @@ export class PostService {
   getUserPosts(userId: number): Observable<Post[]> {
     return this.http.get<Post[]>(`${environment.apiUrl}/users/${userId}/posts`).pipe(
       tap((posts) => {
-        console.log(`✅ Fetched ${posts.length} posts for user ${userId}`);
+        console.log(`Fetched ${posts.length} posts for user ${userId}`);
       }),
       catchError(this.handleError),
     );
@@ -68,7 +68,28 @@ export class PostService {
   createPost(postData: CreatePostRequest): Observable<Post> {
     return this.http.post<Post>(`${environment.apiUrl}/posts`, postData).pipe(
       tap((post) => {
-        console.log(`✅ Post created successfully: ${post.id}`);
+        console.log(`Post created successfully: ${post.id}`);
+
+        // Add new post to feed
+        const currentPosts = this.feedPostsSubject.value;
+        this.feedPostsSubject.next([post, ...currentPosts]); // Add to beginning
+        this.totalPosts.set(currentPosts.length + 1);
+      }),
+      catchError(this.handleError),
+    );
+  }
+
+  createPostWithFile(title: string, content: string, media: File | null): Observable<Post> {
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('content', content);
+    if (media) {
+      formData.append('media', media);
+    }
+
+    return this.http.post<Post>(`${environment.apiUrl}/posts`, formData).pipe(
+      tap((post) => {
+        console.log(`Post created successfully: ${post.id}`);
 
         // Add new post to feed
         const currentPosts = this.feedPostsSubject.value;
@@ -82,7 +103,36 @@ export class PostService {
   updatePost(postId: number, postData: UpdatePostRequest): Observable<Post> {
     return this.http.put<Post>(`${environment.apiUrl}/posts/${postId}`, postData).pipe(
       tap((updatedPost) => {
-        console.log(`✅ Post ${postId} updated successfully`);
+        console.log(`Post ${postId} updated successfully`);
+
+        // Update post in feed
+        const currentPosts = this.feedPostsSubject.value;
+        const updatedPosts = currentPosts.map((post) => (post.id === postId ? updatedPost : post));
+        this.feedPostsSubject.next(updatedPosts);
+      }),
+      catchError(this.handleError),
+    );
+  }
+
+  updatePostWithFile(
+    postId: number,
+    title?: string,
+    content?: string,
+    media?: File | null,
+  ): Observable<Post> {
+    const formData = new FormData();
+    if (title) {
+      formData.append('title', title);
+    }
+    if (content) {
+      formData.append('content', content);
+    }
+    if (media) {
+      formData.append('media', media);
+    }
+    return this.http.put<Post>(`${environment.apiUrl}/posts/${postId}`, formData).pipe(
+      tap((updatedPost) => {
+        console.log(`Post ${postId} updated successfully`);
 
         // Update post in feed
         const currentPosts = this.feedPostsSubject.value;
@@ -96,7 +146,7 @@ export class PostService {
   deletePost(postId: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/posts/${postId}`).pipe(
       tap(() => {
-        console.log(`✅ Post ${postId} deleted successfully`);
+        console.log(`Post ${postId} deleted successfully`);
 
         // Remove post from feed
         const currentPosts = this.feedPostsSubject.value;
@@ -115,7 +165,7 @@ export class PostService {
   likePost(postId: number): Observable<void> {
     return this.http.post<void>(`${environment.apiUrl}/posts/${postId}/like`, {}).pipe(
       tap(() => {
-        console.log(`✅ Post ${postId} liked`);
+        console.log(`Post ${postId} liked`);
 
         // Update post in feed
         this.updatePostLikeStatus(postId, true, 1);
@@ -127,7 +177,7 @@ export class PostService {
   unlikePost(postId: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/posts/${postId}/unlike`).pipe(
       tap(() => {
-        console.log(`✅ Post ${postId} unliked`);
+        console.log(`Post ${postId} unliked`);
 
         // Update post in feed
         this.updatePostLikeStatus(postId, false, -1);
@@ -169,14 +219,14 @@ export class PostService {
   clearFeed(): void {
     this.feedPostsSubject.next([]);
     this.totalPosts.set(0);
-    console.log('🧹 Feed cleared');
+    console.log('Feed cleared');
   }
 
   /**
    * Refresh feed
    */
   refreshFeed(): Observable<Post[]> {
-    console.log('🔄 Refreshing feed...');
+    console.log('Refreshing feed...');
     return this.getPersonalizedFeed();
   }
 
