@@ -54,7 +54,6 @@ public class User implements UserDetails {
 
     // Default constructor (required by JPA)
     // you'll need it later when we fetch users from the database!
-    // TODO: uncomment this line.
     public User() {}
 
     public User(String username, String email, String password) {
